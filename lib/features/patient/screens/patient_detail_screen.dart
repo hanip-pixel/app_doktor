@@ -459,7 +459,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                   ),
                   const Spacer(),
                   // Current Live Status Badge
-                  StatusBadge(status: _patient.status),
+                  StatusBadge.forPatient(_patient),
                 ],
               ),
             ),
@@ -644,9 +644,13 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   // TAMPILAN 2: STATUS SEDANG DIPERIKSA (FORM AKTIF)
   // ==========================================
   Widget _buildInProgressState() {
-    final penunjangResults = DummyOrders.getOrdersByPatient(_patient.id)
+    final patientOrders = DummyOrders.getOrdersByPatient(_patient.id);
+    final penunjangResults = patientOrders
         .where((o) =>
             o.resultSummary != null || o.status == OrderStatus.resultsReady)
+        .toList();
+    final pendingRadOrders = patientOrders
+        .where((o) => o.status == OrderStatus.pendingRadiology)
         .toList();
 
     return SingleChildScrollView(
@@ -853,6 +857,59 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           ),
           const SizedBox(height: 16),
 
+          // Status Order Penunjang Sedang Diproses di Instalasi Radiologi
+          if (pendingRadOrders.isNotEmpty) ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFAF5FF),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFE9D5FF)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF3E8FF),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.hourglass_top_rounded,
+                      color: Color(0xFF9333EA),
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Pasien Sedang di Instalasi Radiologi',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF7E22CE),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Permintaan: ${pendingRadOrders.first.items.join(", ")}. Menunggu hasil pemeriksaan & ekspertise.',
+                          style: const TextStyle(
+                            fontSize: 11.5,
+                            color: Color(0xFF6B21A8),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+
           // Hasil Pemeriksaan Penunjang (Radiologi & Lab)
           if (penunjangResults.isNotEmpty) ...[
             _buildPenunjangResultsSection(penunjangResults),
@@ -977,7 +1034,6 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             Row(
               children: [
                 Expanded(
-                  flex: 3,
                   child: SizedBox(
                     height: 48,
                     child: ElevatedButton.icon(
@@ -985,14 +1041,17 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       icon: const Icon(Icons.edit_note_rounded, size: 20),
                       label: const Text(
                         'Edit Draft',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 14.5,
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00897B),
                         foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1003,7 +1062,6 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  flex: 2,
                   child: SizedBox(
                     height: 48,
                     child: OutlinedButton.icon(
@@ -1011,14 +1069,17 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       icon: const Icon(Icons.restart_alt_rounded, size: 18),
                       label: const Text(
                         'Reset Draft',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFFDC2626),
                         side: const BorderSide(color: Color(0xFFFCA5A5)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

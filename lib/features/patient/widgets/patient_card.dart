@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/widgets/status_badge.dart';
+import '../../../data/dummy/dummy_orders.dart';
+import '../../../data/models/medical_order.dart';
 import '../../../data/models/patient.dart';
 
 class PatientCard extends StatelessWidget {
@@ -14,14 +16,27 @@ class PatientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Cek status order penunjang / radiologi pasien untuk membedakan tahap pemeriksaan
+    final orders = DummyOrders.getOrdersByPatient(patient.id);
+    final pendingRadOrder = orders
+        .where((o) => o.status == OrderStatus.pendingRadiology)
+        .firstOrNull;
+    final readyResultOrder =
+        orders.where((o) => o.status == OrderStatus.resultsReady).firstOrNull;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: const Color(0xFFE8F1F8),
-          width: 1.2,
+          color: pendingRadOrder != null
+              ? const Color(0xFFE9D5FF)
+              : (readyResultOrder != null
+                  ? const Color(0xFFA7F3D0)
+                  : const Color(0xFFE8F1F8)),
+          width:
+              (pendingRadOrder != null || readyResultOrder != null) ? 1.3 : 1.2,
         ),
       ),
       child: Material(
@@ -79,10 +94,80 @@ class PatientCard extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
+
+                      // Penanda Status Tambahan Khusus Tahap Penunjang
+                      if (patient.status == PatientStatus.inProgress &&
+                          pendingRadOrder != null) ...[
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3.5),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFAF5FF),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: const Color(0xFFE9D5FF), width: 0.9),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.hourglass_top_rounded,
+                                  size: 12, color: Color(0xFF9333EA)),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  'Di Instalasi Radiologi (${pendingRadOrder.items.first})',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF7E22CE),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ] else if (patient.status == PatientStatus.inProgress &&
+                          readyResultOrder != null) ...[
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3.5),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFECFDF5),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: const Color(0xFFA7F3D0), width: 0.9),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.verified_rounded,
+                                  size: 12, color: Color(0xFF059669)),
+                              SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  'Hasil Rontgen Thorax Siap Dianalisis',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF065F46),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
-                // Right Column: Chevron + Status Badge
+                const SizedBox(width: 8),
+                // Right Column: Chevron + Smart Contextual Status Badge
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
@@ -93,7 +178,7 @@ class PatientCard extends StatelessWidget {
                       size: 22,
                     ),
                     const SizedBox(height: 18),
-                    StatusBadge(status: patient.status),
+                    StatusBadge.forPatient(patient),
                   ],
                 ),
               ],
