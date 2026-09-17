@@ -9,6 +9,7 @@ import '../../notification/screens/notification_screen.dart';
 import '../../order_monitoring/screens/order_list_screen.dart';
 import '../../../data/dummy/dummy_patients.dart';
 import '../../../data/dummy/dummy_orders.dart';
+import '../../../data/dummy/dummy_notifications.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -254,7 +255,7 @@ class DashboardScreen extends StatelessWidget {
               ],
             ),
           ),
-          // Notification Bell
+          // Notification Bell with Unread Badge
           IconButton(
             onPressed: () {
               Navigator.push(
@@ -264,10 +265,40 @@ class DashboardScreen extends StatelessWidget {
                 ),
               );
             },
-            icon: const Icon(
-              Icons.notifications_none_rounded,
-              color: Colors.white,
-              size: 26,
+            icon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                const Icon(
+                  Icons.notifications_none_rounded,
+                  color: Colors.white,
+                  size: 26,
+                ),
+                if (DummyNotifications.unreadCount > 0)
+                  Positioned(
+                    right: -2,
+                    top: -2,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFEF4444),
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        '${DummyNotifications.unreadCount}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ],

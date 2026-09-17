@@ -1,24 +1,6 @@
 import 'package:flutter/material.dart';
-
-class AppNotification {
-  final String id;
-  final String title;
-  final String desc;
-  final String time;
-  final IconData icon;
-  final Color color;
-  bool isRead;
-
-  AppNotification({
-    required this.id,
-    required this.title,
-    required this.desc,
-    required this.time,
-    required this.icon,
-    required this.color,
-    this.isRead = false,
-  });
-}
+import '../../../data/dummy/dummy_notifications.dart';
+import '../../patient/screens/patient_detail_screen.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -28,65 +10,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  late List<AppNotification> _notifications;
-
-  @override
-  void initState() {
-    super.initState();
-    _initSampleNotifications();
-  }
-
-  void _initSampleNotifications() {
-    _notifications = [
-      AppNotification(
-        id: 'notif_1',
-        title: 'Hasil Lab Baru Tersedia',
-        desc: 'Hasil laboratorium darah lengkap Tn. Budi Santoso (RM 00-24-11) sudah selesai diverifikasi.',
-        time: '5 menit lalu',
-        icon: Icons.science_outlined,
-        color: const Color(0xFF00897B),
-        isRead: false,
-      ),
-      AppNotification(
-        id: 'notif_2',
-        title: 'Order Radiologi Siap Dilihat',
-        desc: 'Hasil foto Thorax AP/PA Ny. Siti Rahayu (RM 00-24-12) telah diunggah oleh dr. Spesialis Radiologi.',
-        time: '25 menit lalu',
-        icon: Icons.biotech_rounded,
-        color: const Color(0xFFA855F7),
-        isRead: false,
-      ),
-      AppNotification(
-        id: 'notif_3',
-        title: 'Pasien Baru di Ruang Tunggu',
-        desc: 'An. Dimas Pratama (RM 00-24-16) telah selesai triase dan menunggu di Ruang Poli Dokter 1.',
-        time: '1 jam lalu',
-        icon: Icons.person_add_alt_1_outlined,
-        color: const Color(0xFF2563EB),
-        isRead: false,
-      ),
-      AppNotification(
-        id: 'notif_4',
-        title: 'Resep Obat Telah Diproses',
-        desc: 'Instalasi Farmasi telah menyiapkan obat untuk Tn. Hendra Gunawan.',
-        time: '3 jam lalu',
-        icon: Icons.local_pharmacy_rounded,
-        color: const Color(0xFF059669),
-        isRead: true,
-      ),
-      AppNotification(
-        id: 'notif_5',
-        title: 'Verifikasi SEP BPJS Berhasil',
-        desc: 'No. SEP 1801R0010926V000129 Ny. Maria Magdalena telah disetujui oleh sistem BPJS V-Claim.',
-        time: '5 jam lalu',
-        icon: Icons.verified_user_outlined,
-        color: const Color(0xFFF59E0B),
-        isRead: true,
-      ),
-    ];
-  }
-
-  int get _unreadCount => _notifications.where((n) => !n.isRead).length;
+  int get _unreadCount => DummyNotifications.unreadCount;
 
   void _markAllAsRead() {
     if (_unreadCount == 0) {
@@ -101,9 +25,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
 
     setState(() {
-      for (var n in _notifications) {
-        n.isRead = true;
-      }
+      DummyNotifications.markAllAsRead();
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +38,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   void _deleteAllNotifications() {
-    if (_notifications.isEmpty) return;
+    if (DummyNotifications.list.isEmpty) return;
 
     showDialog(
       context: context,
@@ -144,9 +66,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
-              final backupList = List<AppNotification>.from(_notifications);
+              final backupList = List<AppNotification>.from(DummyNotifications.list);
               setState(() {
-                _notifications.clear();
+                DummyNotifications.list.clear();
               });
 
               ScaffoldMessenger.of(context).showSnackBar(
@@ -159,7 +81,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     textColor: const Color(0xFF2DD4BF),
                     onPressed: () {
                       setState(() {
-                        _notifications = backupList;
+                        DummyNotifications.list.addAll(backupList);
                       });
                     },
                   ),
@@ -179,7 +101,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   void _deleteSingleNotification(int index, AppNotification item) {
     setState(() {
-      _notifications.removeAt(index);
+      DummyNotifications.list.removeAt(index);
     });
 
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -193,7 +115,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           textColor: const Color(0xFF2DD4BF),
           onPressed: () {
             setState(() {
-              _notifications.insert(index, item);
+              DummyNotifications.list.insert(index, item);
             });
           },
         ),
@@ -204,6 +126,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     final unread = _unreadCount;
+    final notifications = DummyNotifications.list;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -262,7 +185,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ),
 
             // Action Buttons Bar (Baca Semua & Hapus Semua)
-            if (_notifications.isNotEmpty)
+            if (notifications.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
                 child: Row(
@@ -349,16 +272,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
             // Notifications List / Empty State
             Expanded(
-              child: _notifications.isEmpty
+              child: notifications.isEmpty
                   ? _buildEmptyState()
                   : ListView.separated(
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
-                      itemCount: _notifications.length,
+                      itemCount: notifications.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 10),
                       itemBuilder: (context, index) {
-                        final item = _notifications[index];
+                        final item = notifications[index];
                         return _buildDismissibleItem(item, index);
                       },
                     ),
@@ -412,6 +335,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
             setState(() {
               item.isRead = true;
             });
+            if (item.patient != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PatientDetailScreen(patient: item.patient!),
+                ),
+              ).then((_) {
+                if (mounted) setState(() {});
+              });
+            }
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 250),
@@ -509,16 +442,37 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      Text(
-                        item.time,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight:
-                              item.isRead ? FontWeight.w400 : FontWeight.w600,
-                          color: item.isRead
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF00897B),
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            item.time,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight:
+                                  item.isRead ? FontWeight.w400 : FontWeight.w600,
+                              color: item.isRead
+                                  ? const Color(0xFF94A3B8)
+                                  : const Color(0xFF00897B),
+                            ),
+                          ),
+                          if (item.patient != null) ...[
+                            const SizedBox(width: 8),
+                            const Text(
+                              '•',
+                              style: TextStyle(
+                                  color: Color(0xFFCBD5E1), fontSize: 12),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Klik untuk buka EMR',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF00897B),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
                   ),
@@ -573,7 +527,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             OutlinedButton.icon(
               onPressed: () {
                 setState(() {
-                  _initSampleNotifications();
+                  DummyNotifications.resetSample();
                 });
               },
               icon: const Icon(Icons.refresh_rounded, size: 18),
