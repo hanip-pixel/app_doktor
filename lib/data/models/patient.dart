@@ -1,4 +1,5 @@
 import '../../core/widgets/status_badge.dart';
+import 'examination_entry.dart';
 
 class Patient {
   final String id;
@@ -13,7 +14,7 @@ class Patient {
   final String insurance;
   final String? noSep;
 
-  // detail pemeriksaan (statis)
+  // detail pemeriksaan (statis / kompatibilitas)
   final String? keluhanUtama;
   final String? anamnesis;
   final String? pemeriksaanFisik;
@@ -22,7 +23,13 @@ class Patient {
   final String? laju;
   final String? suhu;
   final List<String> diagnosa;
+  final List<String> tindakan;
   final String? rencanaTerapi;
+
+  // Detail Pemeriksaan Layanan Baru (CPPT, TTV, Diagnosa/Tindakan)
+  final CpptData? cpptData;
+  final TtvData? ttvData;
+  final DiagnosaTindakanData? diagnosaTindakanData;
 
   const Patient({
     required this.id,
@@ -44,7 +51,11 @@ class Patient {
     this.laju,
     this.suhu,
     this.diagnosa = const [],
+    this.tindakan = const [],
     this.rencanaTerapi,
+    this.cpptData,
+    this.ttvData,
+    this.diagnosaTindakanData,
   });
 
   Patient copyWith({
@@ -67,7 +78,11 @@ class Patient {
     String? laju,
     String? suhu,
     List<String>? diagnosa,
+    List<String>? tindakan,
     String? rencanaTerapi,
+    CpptData? cpptData,
+    TtvData? ttvData,
+    DiagnosaTindakanData? diagnosaTindakanData,
   }) {
     return Patient(
       id: id ?? this.id,
@@ -89,7 +104,13 @@ class Patient {
       laju: laju ?? this.laju,
       suhu: suhu ?? this.suhu,
       diagnosa: diagnosa ?? this.diagnosa,
+      tindakan: tindakan ?? this.tindakan,
       rencanaTerapi: rencanaTerapi ?? this.rencanaTerapi,
+      cpptData: cpptData ?? this.cpptData,
+      ttvData: ttvData ?? this.ttvData,
+      diagnosaTindakanData:
+          diagnosaTindakanData ?? this.diagnosaTindakanData,
     );
   }
 }
+
