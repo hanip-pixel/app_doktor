@@ -3,12 +3,16 @@ import 'patient.dart';
 enum OrderType {
   radiology,
   medicine,
+  lab,
+  surgery,
   billing,
 }
 
 enum OrderStatus {
   pendingRadiology,
   pendingPharmacy,
+  pendingLab,
+  pendingSurgery,
   resultsReady,
   pendingBilling,
   completed,
@@ -45,6 +49,10 @@ class MedicalOrder {
         return 'Radiologi';
       case OrderType.medicine:
         return 'Resep Obat';
+      case OrderType.lab:
+        return 'Laboratorium';
+      case OrderType.surgery:
+        return 'Kamar Operasi (OK)';
       case OrderType.billing:
         return 'Billing Kasir';
     }
@@ -56,6 +64,10 @@ class MedicalOrder {
         return 'Antrean Radiologi';
       case OrderStatus.pendingPharmacy:
         return 'Diproses Farmasi';
+      case OrderStatus.pendingLab:
+        return 'Diproses Laboratorium';
+      case OrderStatus.pendingSurgery:
+        return 'Penjadwalan OK';
       case OrderStatus.resultsReady:
         return 'Hasil Tersedia';
       case OrderStatus.pendingBilling:
