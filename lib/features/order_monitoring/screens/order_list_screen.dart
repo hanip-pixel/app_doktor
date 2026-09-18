@@ -968,7 +968,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
     );
   }
 
-  _TypeConfig _getTypeConfig(OrderType type) {
+    _TypeConfig _getTypeConfig(OrderType type) {
     switch (type) {
       case OrderType.radiology:
         return _TypeConfig(
@@ -981,6 +981,18 @@ class _OrderListScreenState extends State<OrderListScreen> {
           icon: Icons.local_pharmacy_rounded,
           color: const Color(0xFF0284C7),
           bgColor: const Color(0xFFE0F2FE),
+        );
+      case OrderType.lab:
+        return _TypeConfig(
+          icon: Icons.science_rounded,
+          color: const Color(0xFF059669),
+          bgColor: const Color(0xFFD1FAE5),
+        );
+      case OrderType.surgery:
+        return _TypeConfig(
+          icon: Icons.local_hospital_rounded,
+          color: const Color(0xFFE11D48),
+          bgColor: const Color(0xFFFFE4E6),
         );
       case OrderType.billing:
         return _TypeConfig(
@@ -1004,6 +1016,18 @@ class _OrderListScreenState extends State<OrderListScreen> {
           icon: Icons.access_time_filled_rounded,
           color: const Color(0xFFD97706),
           bgColor: const Color(0xFFFEF3C7),
+        );
+      case OrderStatus.pendingLab:
+        return _StatusConfig(
+          icon: Icons.science_rounded,
+          color: const Color(0xFF059669),
+          bgColor: const Color(0xFFD1FAE5),
+        );
+      case OrderStatus.pendingSurgery:
+        return _StatusConfig(
+          icon: Icons.emergency_rounded,
+          color: const Color(0xFFE11D48),
+          bgColor: const Color(0xFFFFE4E6),
         );
       case OrderStatus.resultsReady:
         return _StatusConfig(

@@ -10,6 +10,8 @@ import '../../medicine_order/screens/medicine_order_screen.dart';
 import '../../billing/screens/billing_screen.dart';
 import '../../examination/screens/examination_screen.dart';
 import '../../examination/widgets/examination_flow_view.dart';
+import '../../lab_order/screens/lab_order_screen.dart';
+import '../../surgery_order/screens/surgery_order_screen.dart';
 
 class PatientDetailScreen extends StatefulWidget {
   final Patient patient;
@@ -42,7 +44,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: 4,
+      length: 3,
       vsync: this,
       initialIndex: widget.initialTabIndex.clamp(0, 3),
     );
@@ -498,7 +500,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             // Conditional Content based on Patient Status:
             // Pasien Menunggu dan Pasien Selesai tidak memiliki akses ke Order, Riwayat, & Billing.
             // TabBar hanya ditampilkan saat pasien Sedang Diperiksa (inProgress).
-            if (_patient.status == PatientStatus.inProgress) ...[
+                       if (_patient.status == PatientStatus.inProgress) ...[
               TabBar(
                 controller: _tabController,
                 labelColor: const Color(0xFF00897B),
@@ -516,7 +518,6 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 tabs: const [
                   Tab(text: 'Pemeriksaan'),
                   Tab(text: 'Order'),
-                  Tab(text: 'Riwayat'),
                   Tab(text: 'Billing'),
                 ],
               ),
@@ -526,7 +527,6 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                   children: [
                     _buildInProgressState(),
                     _buildOrderTab(),
-                    _buildRiwayatTab(),
                     _buildBillingTab(),
                   ],
                 ),
@@ -2358,21 +2358,21 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     );
   }
 
-  Widget _buildOrderTab() {
+   Widget _buildOrderTab() {
     final patientOrders = DummyOrders.getOrdersByPatient(_patient.id);
 
     return ListView(
-      padding: const EdgeInsets.all(16),
       physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(16),
       children: [
-        // Action Buttons: Buat Order Baru
+        // Baris 1: Order Radiologi & Order Lab
         Row(
           children: [
             Expanded(
               child: _quickOrderActionCard(
-                icon: Icons.document_scanner_outlined,
+                icon: Icons.biotech_rounded,
                 title: 'Order Radiologi',
-                subtitle: '+ Buat Baru',
+                subtitle: '+ Rontgen / USG',
                 gradient: const LinearGradient(
                   colors: [Color(0xFFD946EF), Color(0xFFA855F7)],
                 ),
@@ -2388,6 +2388,32 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               ),
             ),
             const SizedBox(width: 10),
+            Expanded(
+              child: _quickOrderActionCard(
+                icon: Icons.science_rounded,
+                title: 'Order Lab',
+                subtitle: '+ Darah / Urin',
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF10B981), Color(0xFF059669)],
+                ),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => LabOrderScreen(patient: _patient),
+                    ),
+                  );
+                  if (mounted) setState(() {});
+                },
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+
+        // Baris 2: Order Obat & Order OK (Operasi)
+        Row(
+          children: [
             Expanded(
               child: _quickOrderActionCard(
                 icon: Icons.medication_rounded,
@@ -2407,9 +2433,31 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 },
               ),
             ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _quickOrderActionCard(
+                icon: Icons.local_hospital_rounded,
+                title: 'Order OK',
+                subtitle: '+ Jadwal Bedah',
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFF43F5E), Color(0xFFE11D48)],
+                ),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SurgeryOrderScreen(patient: _patient),
+                    ),
+                  );
+                  if (mounted) setState(() {});
+                },
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 20),
+
+        // Daftar Order Pasien Ini (Sama seperti sebelumnya)...
 
         // Section: Order Aktif Pasien Ini
         Row(
@@ -2488,19 +2536,31 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             ),
           )
         else
-          ...patientOrders.map((order) {
+                    ...patientOrders.map((order) {
             final isRad = order.type == OrderType.radiology;
             final isMed = order.type == OrderType.medicine;
+            final isLab = order.type == OrderType.lab;
+            final isSurgery = order.type == OrderType.surgery;
+
             final badgeColor = isRad
                 ? const Color(0xFF9333EA)
                 : isMed
                     ? const Color(0xFF0284C7)
-                    : const Color(0xFFEA580C);
+                    : isLab
+                        ? const Color(0xFF059669)
+                        : isSurgery
+                            ? const Color(0xFFE11D48)
+                            : const Color(0xFFEA580C);
+
             final badgeBg = isRad
                 ? const Color(0xFFF3E8FF)
                 : isMed
                     ? const Color(0xFFE0F2FE)
-                    : const Color(0xFFFFEDD5);
+                    : isLab
+                        ? const Color(0xFFD1FAE5)
+                        : isSurgery
+                            ? const Color(0xFFFFE4E6)
+                            : const Color(0xFFFFEDD5);
 
             return Container(
               margin: const EdgeInsets.only(bottom: 10),
@@ -2697,60 +2757,6 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             ),
           ),
         ),
-      ),
-    );
-  }
-
-
-  Widget _buildRiwayatTab() {
-    return ListView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(16),
-      children: [
-        _historyTile('16 Sep 2026', _patient.complaint, 'dr. Andi Pratama, Sp.PD'),
-        _historyTile('12 Agu 2026', 'Kontrol gula darah puasa', 'dr. Andi Pratama, Sp.PD'),
-        _historyTile('05 Jul 2026', 'Keluhan lemas dan kesemutan', 'dr. Andi Pratama, Sp.PD'),
-      ],
-    );
-  }
-
-  Widget _historyTile(String date, String reason, String doctor) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FBFE),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8F1F8), width: 1.2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            date,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            reason,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Color(0xFF334155),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            doctor,
-            style: const TextStyle(
-              fontSize: 11.5,
-              color: Color(0xFF64748B),
-            ),
-          ),
-        ],
       ),
     );
   }
