@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../patient/screens/patient_list_screen.dart';
+import '../../patient/screens/patient_search_screen.dart';
 import '../../patient/screens/patient_history_screen.dart';
 import '../../examination/screens/examination_screen.dart';
 import '../../radiology_order/screens/radiology_order_screen.dart';
@@ -69,18 +70,18 @@ class DashboardScreen extends StatelessWidget {
                           // Menu Action Items
                           _buildMenuItem(
                             context,
-                            icon: Icons.assignment_ind_rounded,
+                            icon: Icons.person_search_rounded,
                             gradient: const LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [Color(0xFF00BCD4), Color(0xFF009688)],
                             ),
-                            title: 'Daftar Pasien',
-                            subtitle: 'Lihat & pilih pasien',
+                            title: 'Cari & Pantau Pasien',
+                            subtitle: 'Cari data spesifik & pantau tindakan',
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const PatientListScreen(),
+                                builder: (_) => const PatientSearchScreen(),
                               ),
                             ),
                           ),

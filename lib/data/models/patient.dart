@@ -31,6 +31,17 @@ class Patient {
   final TtvData? ttvData;
   final DiagnosaTindakanData? diagnosaTindakanData;
 
+  // Identitas Tambahan Demografis & Layanan
+  final String? birthDate;
+  final String? bloodType;
+  final String? phone;
+  final String? address;
+  final List<String> allergies;
+  final String? poli;
+  final String? dpjp;
+  final String? emergencyContact;
+  final String? occupation;
+
   const Patient({
     required this.id,
     required this.name,
@@ -43,6 +54,15 @@ class Patient {
     required this.status,
     this.insurance = 'BPJS',
     this.noSep,
+    this.birthDate,
+    this.bloodType,
+    this.phone,
+    this.address,
+    this.allergies = const [],
+    this.poli = 'Poli Penyakit Dalam',
+    this.dpjp = 'dr. Andi Pratama, Sp.PD',
+    this.emergencyContact,
+    this.occupation,
     this.keluhanUtama,
     this.anamnesis,
     this.pemeriksaanFisik,
@@ -70,6 +90,15 @@ class Patient {
     PatientStatus? status,
     String? insurance,
     String? noSep,
+    String? birthDate,
+    String? bloodType,
+    String? phone,
+    String? address,
+    List<String>? allergies,
+    String? poli,
+    String? dpjp,
+    String? emergencyContact,
+    String? occupation,
     String? keluhanUtama,
     String? anamnesis,
     String? pemeriksaanFisik,
@@ -96,6 +125,15 @@ class Patient {
       status: status ?? this.status,
       insurance: insurance ?? this.insurance,
       noSep: noSep ?? this.noSep,
+      birthDate: birthDate ?? this.birthDate,
+      bloodType: bloodType ?? this.bloodType,
+      phone: phone ?? this.phone,
+      address: address ?? this.address,
+      allergies: allergies ?? this.allergies,
+      poli: poli ?? this.poli,
+      dpjp: dpjp ?? this.dpjp,
+      emergencyContact: emergencyContact ?? this.emergencyContact,
+      occupation: occupation ?? this.occupation,
       keluhanUtama: keluhanUtama ?? this.keluhanUtama,
       anamnesis: anamnesis ?? this.anamnesis,
       pemeriksaanFisik: pemeriksaanFisik ?? this.pemeriksaanFisik,

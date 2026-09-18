@@ -17,7 +17,7 @@ class _SurgeryOrderScreenState extends State<SurgeryOrderScreen> {
   String _surgeryType = 'Apendektomi Laparoskopi / Open';
   String _urgency = 'Elektif'; // 'Elektif' atau 'Cito'
   String _operatorDoctor = 'dr. Hendra Gunawan, Sp.B';
-  String _operatingRoom = 'Kamar Bedah Mayor 1 (OK-1)';
+  final String _operatingRoom = 'Kamar Bedah Mayor 1 (OK-1)';
   DateTime _scheduledDate = DateTime.now().add(const Duration(days: 1));
   TimeOfDay _scheduledTime = const TimeOfDay(hour: 9, minute: 0);
   final TextEditingController _notesController = TextEditingController();
