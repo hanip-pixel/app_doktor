@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../data/models/patient.dart';
+import '../../features/patient/screens/patient_history_screen.dart';
 
 class PatientHeaderCard extends StatelessWidget {
   final Patient patient;
-  final VoidCallback? onDetailTap;
+  final VoidCallback? onRiwayatTap;
 
   const PatientHeaderCard({
     super.key,
     required this.patient,
-    this.onDetailTap,
+    this.onRiwayatTap,
   });
 
   @override
@@ -88,10 +89,10 @@ class PatientHeaderCard extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                if (patient.noSep != null) ...[
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    if (patient.noSep != null)
                       Text(
                         'No. SEP : ${patient.noSep}',
                         style: const TextStyle(
@@ -99,94 +100,48 @@ class PatientHeaderCard extends StatelessWidget {
                           color: Color(0xFF64748B),
                         ),
                       ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: onDetailTap ??
-                            () {
-                              _showSepDialog(context);
-                            },
-                        child: const Text(
-                          'Lihat Detail',
-                          style: TextStyle(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF00897B),
-                          ),
+                    const Spacer(),
+                    // Tombol Riwayat Menggantikan "Lihat Detail" (Membuka Full Page)
+                    GestureDetector(
+                      onTap: onRiwayatTap ??
+                          () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PatientHistoryScreen(patient: patient),
+                              ),
+                            );
+                          },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE0F2F1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.history_edu_rounded,
+                              size: 13,
+                              color: Color(0xFF00897B),
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Riwayat',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF00897B),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showSepDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            const Icon(Icons.verified_user_outlined, color: Color(0xFF00897B)),
-            const SizedBox(width: 8),
-            Text(
-              'Detail SEP BPJS',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _rowInfo('Nama Pasien', patient.name),
-            _rowInfo('No. RM', patient.mrNumber),
-            _rowInfo('No. SEP', patient.noSep ?? '-'),
-            _rowInfo('Peserta', patient.insurance),
-            _rowInfo('NIK', patient.nik ?? '3171012304790001'),
-            _rowInfo('Status Klaim', 'Terverifikasi BPJS Kesehatan'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text(
-              'Tutup',
-              style: TextStyle(color: Color(0xFF00897B), fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _rowInfo(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 90,
-            child: Text(
-              label,
-              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-            ),
-          ),
-          const Text(': ', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF1E293B),
-              ),
             ),
           ),
         ],

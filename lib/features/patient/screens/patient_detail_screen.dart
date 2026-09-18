@@ -40,7 +40,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: 4,
+      length: 3,
       vsync: this,
       initialIndex: widget.initialTabIndex.clamp(0, 3),
     );
@@ -474,7 +474,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             // Conditional Content based on Patient Status:
             // Pasien Menunggu dan Pasien Selesai tidak memiliki akses ke Order, Riwayat, & Billing.
             // TabBar hanya ditampilkan saat pasien Sedang Diperiksa (inProgress).
-            if (_patient.status == PatientStatus.inProgress) ...[
+                       if (_patient.status == PatientStatus.inProgress) ...[
               TabBar(
                 controller: _tabController,
                 labelColor: const Color(0xFF00897B),
@@ -492,7 +492,6 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 tabs: const [
                   Tab(text: 'Pemeriksaan'),
                   Tab(text: 'Order'),
-                  Tab(text: 'Riwayat'),
                   Tab(text: 'Billing'),
                 ],
               ),
@@ -502,7 +501,6 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                   children: [
                     _buildInProgressState(),
                     _buildOrderTab(),
-                    _buildRiwayatTab(),
                     _buildBillingTab(),
                   ],
                 ),
