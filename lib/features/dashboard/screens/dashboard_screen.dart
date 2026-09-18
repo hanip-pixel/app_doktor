@@ -11,6 +11,7 @@ import '../../order_monitoring/screens/order_list_screen.dart';
 import '../../../data/dummy/dummy_patients.dart';
 import '../../../data/dummy/dummy_orders.dart';
 import '../../../data/dummy/dummy_notifications.dart';
+import '../../medicine_order/screens/medicine_patient_search_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -26,10 +27,7 @@ class DashboardScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF00897B),
-              Color(0xFF00796B),
-            ],
+            colors: [Color(0xFF00897B), Color(0xFF00796B)],
           ),
         ),
         child: SafeArea(
@@ -135,7 +133,7 @@ class DashboardScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (_) =>
-                                    MedicineOrderScreen(patient: patient),
+                                    const MedicinePatientSearchScreen(),
                               ),
                             ),
                           ),
@@ -152,8 +150,7 @@ class DashboardScreen extends StatelessWidget {
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    BillingScreen(patient: patient),
+                                builder: (_) => BillingScreen(patient: patient),
                               ),
                             ),
                           ),
@@ -261,9 +258,7 @@ class DashboardScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const NotificationScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => const NotificationScreen()),
               );
             },
             icon: Stack(
@@ -310,11 +305,7 @@ class DashboardScreen extends StatelessWidget {
   Widget _buildDateHeader() {
     return const Row(
       children: [
-        Icon(
-          Icons.calendar_today_outlined,
-          size: 15,
-          color: Color(0xFF64748B),
-        ),
+        Icon(Icons.calendar_today_outlined, size: 15, color: Color(0xFF64748B)),
         SizedBox(width: 8),
         Text(
           'Rabu, 16 Sep 2026',
@@ -342,9 +333,7 @@ class DashboardScreen extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const PatientListScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const PatientListScreen()),
             );
           },
         ),
@@ -453,10 +442,7 @@ class DashboardScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFF8FBFE),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xFFE8F1F8),
-          width: 1.2,
-        ),
+        border: Border.all(color: const Color(0xFFE8F1F8), width: 1.2),
       ),
       child: Material(
         color: Colors.transparent,
