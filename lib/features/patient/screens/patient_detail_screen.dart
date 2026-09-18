@@ -8,6 +8,8 @@ import '../../../data/models/patient.dart';
 import '../../radiology_order/screens/radiology_order_screen.dart';
 import '../../medicine_order/screens/medicine_order_screen.dart';
 import '../../billing/screens/billing_screen.dart';
+import '../../examination/screens/examination_screen.dart';
+import '../../examination/widgets/examination_flow_view.dart';
 
 class PatientDetailScreen extends StatefulWidget {
   final Patient patient;
@@ -47,7 +49,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     _patient = widget.patient;
     _diagnosaList = List.from(
       _patient.diagnosa.isEmpty
-          ? ['E11.9  Diabetes melitus tipe 2']
+          ? ['R69  Pemeriksaan klinis']
           : _patient.diagnosa,
     );
     _keluhanController = TextEditingController(
@@ -55,11 +57,13 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     );
     _anamnesisController = TextEditingController(
       text: _patient.anamnesis ??
-          'Pasien datang untuk kontrol rutin. Tidak ada keluhan sesak atau nyeri dada baru.',
+          _patient.cpptData?.asesmen ??
+          'Anamnesis terverifikasi: ${_patient.complaint}',
     );
     _terapiController = TextEditingController(
       text: _patient.rencanaTerapi ??
-          'Kontrol rutin, edukasi diet dan olahraga teratur.',
+          _patient.cpptData?.plan ??
+          'Terapi simptomatik dan edukasi pasien.',
     );
   }
 
@@ -248,12 +252,13 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               await Future.delayed(const Duration(milliseconds: 600));
               if (mounted) {
                 Navigator.pop(context);
+                final updatedPatient = _patient.copyWith(
+                  status: PatientStatus.inProgress,
+                );
                 setState(() {
-                  _patient = _patient.copyWith(
-                    status: PatientStatus.inProgress,
-                  );
+                  _patient = updatedPatient;
                 });
-                _updatePatientInDummyList(_patient);
+                _updatePatientInDummyList(updatedPatient);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
@@ -263,6 +268,25 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                     duration: const Duration(seconds: 2),
                   ),
                 );
+
+                // Langsung buka formulir pemeriksaan 3-step
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ExaminationScreen(patient: updatedPatient),
+                  ),
+                ).then((_) {
+                  final latest = DummyPatients.todayList.firstWhere(
+                    (p) => p.id == _patient.id,
+                    orElse: () => _patient,
+                  );
+                  if (mounted) {
+                    setState(() {
+                      _patient = latest;
+                    });
+                  }
+                });
               }
             },
             style: ElevatedButton.styleFrom(
@@ -644,6 +668,19 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   // TAMPILAN 2: STATUS SEDANG DIPERIKSA (FORM AKTIF)
   // ==========================================
   Widget _buildInProgressState() {
+    return ExaminationFlowView(
+      patient: _patient,
+      onSaved: (updated) {
+        setState(() {
+          _patient = updated;
+        });
+        _updatePatientInDummyList(updated);
+      },
+    );
+  }
+
+  // ignore: unused_element
+  Widget _buildLegacyInProgressState() {
     final patientOrders = DummyOrders.getOrdersByPatient(_patient.id);
     final penunjangResults = patientOrders
         .where((o) =>
@@ -659,6 +696,104 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Banner Cepat: Buka Formulir Pemeriksaan 3-Step Alur Baru
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF00897B), Color(0xFF00695C)],
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF00897B).withValues(alpha: 0.2),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.18),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.assignment_turned_in_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Formulir Pemeriksaan (3-Step)',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13.5,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        '1. Layanan  •  2. Isi Form  •  3. Validasi',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ExaminationScreen(patient: _patient),
+                      ),
+                    ).then((_) {
+                      final updated = DummyPatients.todayList.firstWhere(
+                        (p) => p.id == _patient.id,
+                        orElse: () => _patient,
+                      );
+                      if (mounted) {
+                        setState(() {
+                          _patient = updated;
+                        });
+                      }
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF00897B),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    minimumSize: const Size(0, 34),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Buka Form',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w800, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           // Banner Status Draft / Mode Edit
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -1213,13 +1348,18 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   }
 
   // ==========================================
-  // TAMPILAN 3: STATUS SELESAI (RESUME MEDIS / READ ONLY)
+  // TAMPILAN RESUME MEDIS SELESAI (DONE STATE)
   // ==========================================
   Widget _buildDoneState() {
     final penunjangResults = DummyOrders.getOrdersByPatient(_patient.id)
         .where((o) =>
-            o.resultSummary != null || o.status == OrderStatus.resultsReady)
+            o.resultSummary != null ||
+            o.status == OrderStatus.resultsReady ||
+            o.status == OrderStatus.completed)
         .toList();
+
+    final cppt = _patient.cpptData;
+    final ttv = _patient.ttvData;
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -1231,36 +1371,47 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFCBD5E1)),
+              gradient: const LinearGradient(
+                colors: [Color(0xFFF0FDF4), Color(0xFFDCFCE7)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFF86EFAC), width: 1.2),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(
-                  Icons.task_alt_rounded,
-                  color: Color(0xFF059669),
-                  size: 24,
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF16A34A),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.verified_rounded,
+                    color: Colors.white,
+                    size: 22,
+                  ),
                 ),
-                SizedBox(width: 12),
-                Expanded(
+                const SizedBox(width: 12),
+                const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Pemeriksaan Medis Selesai',
+                        'Pemeriksaan Medis Selesai & Terkunci',
                         style: TextStyle(
                           fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF1E293B),
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF14532D),
                         ),
                       ),
                       SizedBox(height: 2),
                       Text(
-                        'Rekam medis telah tersimpan dan terkunci untuk keamanan data.',
+                        'Rekam Medis Elektronik (RME) telah tersimpan dan tervalidasi oleh DPJP.',
                         style: TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF64748B),
+                          fontSize: 11.5,
+                          color: Color(0xFF15803D),
                         ),
                       ),
                     ],
@@ -1269,94 +1420,341 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               ],
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
 
-          // Resume Medis Content (Read Only)
-          _sectionTitle('Resume Keluhan Utama'),
-          const SizedBox(height: 6),
-          _inputContainer(
-            child: Text(
-              _keluhanController.text,
-              style: const TextStyle(fontSize: 13.5, color: Color(0xFF1E293B)),
+          // TANDA-TANDA VITAL (TTV)
+          _sectionTitle('Tanda-Tanda Vital (TTV)'),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-          ),
-          const SizedBox(height: 14),
-
-          _sectionTitle('Anamnesis Terverifikasi'),
-          const SizedBox(height: 6),
-          _inputContainer(
-            child: Text(
-              _anamnesisController.text,
-              style: const TextStyle(fontSize: 13.5, color: Color(0xFF1E293B)),
-            ),
-          ),
-          const SizedBox(height: 14),
-
-          _sectionTitle('Pemeriksaan Fisik'),
-          const SizedBox(height: 6),
-          _inputContainer(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _vitalRow('TD', _patient.tekananDarah ?? '130/80 mmHg'),
-                const SizedBox(height: 4),
-                _vitalRow('Nadi', _patient.nadi ?? '78 x/menit'),
-                const SizedBox(height: 4),
-                _vitalRow('RR', _patient.laju ?? '20 x/menit'),
-                const SizedBox(height: 4),
-                _vitalRow('Suhu', _patient.suhu ?? '36.5 °C'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-
-          // Hasil Pemeriksaan Penunjang (Radiologi & Lab)
-          if (penunjangResults.isNotEmpty) ...[
-            _buildPenunjangResultsSection(penunjangResults),
-            const SizedBox(height: 14),
-          ],
-
-          _sectionTitle('Diagnosa Akhir'),
-          const SizedBox(height: 6),
-          Column(
-            children: _diagnosaList.map((d) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 6),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8FBFE),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFFE2EEF8)),
-                ),
-                child: Row(
+                Row(
                   children: [
-                    const Icon(Icons.check_circle_rounded,
-                        color: Color(0xFF00897B), size: 18),
+                    Expanded(
+                      child: _doneVitalCard(
+                        'Tekanan Darah',
+                        ttv?.tekananDarah ??
+                            _patient.tekananDarah ??
+                            '120/80 mmHg',
+                        Icons.speed_rounded,
+                        const Color(0xFFEF4444),
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Text(
-                        d,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF1E293B),
-                        ),
+                      child: _doneVitalCard(
+                        'Denyut Nadi',
+                        ttv != null
+                            ? '${ttv.nadi} x/mnt'
+                            : (_patient.nadi ?? '80 x/mnt'),
+                        Icons.favorite_rounded,
+                        const Color(0xFFE11D48),
                       ),
                     ),
                   ],
                 ),
-              );
-            }).toList(),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _doneVitalCard(
+                        'Laju Nafas',
+                        ttv != null
+                            ? '${ttv.lajuNafas} x/mnt'
+                            : (_patient.laju ?? '18 x/mnt'),
+                        Icons.air_rounded,
+                        const Color(0xFF0284C7),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _doneVitalCard(
+                        'Suhu Tubuh',
+                        ttv != null
+                            ? '${ttv.suhu} °C'
+                            : (_patient.suhu ?? '36.5 °C'),
+                        Icons.thermostat_rounded,
+                        const Color(0xFFD97706),
+                      ),
+                    ),
+                  ],
+                ),
+                if (ttv != null &&
+                    (ttv.spo2.isNotEmpty || ttv.beratBadan.isNotEmpty)) ...[
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _doneVitalCard(
+                          'Saturasi SpO2',
+                          '${ttv.spo2} %',
+                          Icons.water_drop_rounded,
+                          const Color(0xFF0D9488),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _doneVitalCard(
+                          'BB / TB (IMT)',
+                          '${ttv.beratBadan}kg / ${ttv.tinggiBadan}cm (${ttv.imtCategory})',
+                          Icons.monitor_weight_rounded,
+                          const Color(0xFF7C3AED),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
 
-          _sectionTitle('Rencana Terapi & Edukasi'),
-          const SizedBox(height: 6),
-          _inputContainer(
-            child: Text(
-              _terapiController.text,
-              style: const TextStyle(fontSize: 13.5, color: Color(0xFF1E293B)),
+          // CATATAN PERKEMBANGAN PASIEN TERINTEGRASI (CPPT - SOAP)
+          _sectionTitle('Catatan Perkembangan Pasien (CPPT - SOAP)'),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _soapBlock(
+                    'S',
+                    'Subjektif / Keluhan',
+                    cppt?.subjektif.isNotEmpty == true
+                        ? cppt!.subjektif
+                        : (_patient.keluhanUtama ?? _patient.complaint),
+                    const Color(0xFF00897B)),
+                const Divider(height: 16, color: Color(0xFFF1F5F9)),
+                _soapBlock(
+                    'O',
+                    'Objektif / Fisik & Penunjang',
+                    cppt?.objektif.isNotEmpty == true
+                        ? cppt!.objektif
+                        : (_patient.pemeriksaanFisik ??
+                            'Pemeriksaan fisik dalam batas normal.'),
+                    const Color(0xFF2563EB)),
+                const Divider(height: 16, color: Color(0xFFF1F5F9)),
+                _soapBlock(
+                    'A',
+                    'Asesmen / Analisis Klinis',
+                    cppt?.asesmen.isNotEmpty == true
+                        ? cppt!.asesmen
+                        : (_patient.anamnesis ??
+                            'Kondisi klinis terkompensasi baik.'),
+                    const Color(0xFFD97706)),
+                const Divider(height: 16, color: Color(0xFFF1F5F9)),
+                _soapBlock(
+                    'P',
+                    'Plan / Rencana Terapi & Tindak Lanjut',
+                    cppt?.plan.isNotEmpty == true
+                        ? cppt!.plan
+                        : (_patient.rencanaTerapi ??
+                            'Lanjutkan terapi dan edukasi.'),
+                    const Color(0xFF7C3AED)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // HASIL PEMERIKSAAN PENUNJANG (RADIOLOGI & LAB)
+          if (penunjangResults.isNotEmpty) ...[
+            _buildPenunjangResultsSection(penunjangResults),
+            const SizedBox(height: 16),
+          ],
+
+          // DIAGNOSA ICD-10 & TINDAKAN ICD-9-CM
+          _sectionTitle('Diagnosa & Tindakan Medis'),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Diagnosa Utama & Sekunder (ICD-10):',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF64748B),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Column(
+                  children: _patient.diagnosa.map((d) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0FDF4),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFFBBF7D0)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.check_circle_rounded,
+                              color: Color(0xFF16A34A), size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              d,
+                              style: const TextStyle(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF15803D),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+                if (_patient.tindakan.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Tindakan Medis / Prosedur (ICD-9-CM):',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Column(
+                    children: _patient.tindakan.map((t) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEFF6FF),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFFBFDBFE)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.medical_services_rounded,
+                                color: Color(0xFF2563EB), size: 16),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                t,
+                                style: const TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF1E40AF),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // RENCANA TERAPI, RESEP & EDUKASI
+          _sectionTitle('Rencana Terapi, Resep & Edukasi'),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.medication_rounded,
+                        color: Color(0xFF00897B), size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Instruksi Obat & Resep:',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF64748B),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _patient.rencanaTerapi ?? _terapiController.text,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF1E293B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                if (_patient.diagnosaTindakanData?.catatanEdukasi.isNotEmpty ==
+                    true) ...[
+                  const Divider(height: 16, color: Color(0xFFF1F5F9)),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.school_rounded,
+                          color: Color(0xFFD97706), size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Edukasi Pasien:',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF64748B),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              _patient.diagnosaTindakanData!.catatanEdukasi,
+                              style: const TextStyle(
+                                fontSize: 12.5,
+                                color: Color(0xFF334155),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
             ),
           ),
           const SizedBox(height: 24),
@@ -1388,6 +1786,93 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _doneVitalCard(
+      String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 16),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 10.5,
+                    color: Color(0xFF64748B),
+                  ),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0F172A),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _soapBlock(
+      String letter, String title, String content, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                letter,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: color,
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          content,
+          style: const TextStyle(
+            fontSize: 12.5,
+            color: Color(0xFF334155),
+            height: 1.35,
+          ),
+        ),
+      ],
     );
   }
 
