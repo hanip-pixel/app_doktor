@@ -89,7 +89,7 @@ class PatientHeaderCard extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Row(
                   children: [
                     if (patient.noSep != null)
@@ -101,41 +101,46 @@ class PatientHeaderCard extends StatelessWidget {
                         ),
                       ),
                     const Spacer(),
-                    // Tombol Riwayat Menggantikan "Lihat Detail" (Membuka Full Page)
-                    GestureDetector(
-                      onTap: onRiwayatTap ??
-                          () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => PatientHistoryScreen(patient: patient),
-                              ),
-                            );
-                          },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE0F2F1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.history_edu_rounded,
-                              size: 13,
-                              color: Color(0xFF00897B),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'Riwayat',
-                              style: TextStyle(
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w700,
+                    // Tombol Riwayat (Lebih Besar & Nyaman Ditekan)
+                    Material(
+                      color: const Color(0xFFE0F2F1),
+                      borderRadius: BorderRadius.circular(8),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: onRiwayatTap ??
+                            () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      PatientHistoryScreen(patient: patient),
+                                ),
+                              );
+                            },
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.history_edu_rounded,
+                                size: 15,
                                 color: Color(0xFF00897B),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 5),
+                              Text(
+                                'Riwayat',
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF00897B),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

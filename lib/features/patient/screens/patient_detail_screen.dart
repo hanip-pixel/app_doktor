@@ -2214,60 +2214,6 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     );
   }
 
-
-  Widget _buildRiwayatTab() {
-    return ListView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(16),
-      children: [
-        _historyTile('16 Sep 2026', _patient.complaint, 'dr. Andi Pratama, Sp.PD'),
-        _historyTile('12 Agu 2026', 'Kontrol gula darah puasa', 'dr. Andi Pratama, Sp.PD'),
-        _historyTile('05 Jul 2026', 'Keluhan lemas dan kesemutan', 'dr. Andi Pratama, Sp.PD'),
-      ],
-    );
-  }
-
-  Widget _historyTile(String date, String reason, String doctor) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FBFE),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8F1F8), width: 1.2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            date,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            reason,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Color(0xFF334155),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            doctor,
-            style: const TextStyle(
-              fontSize: 11.5,
-              color: Color(0xFF64748B),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildBillingTab() {
     return Center(
       child: Padding(
