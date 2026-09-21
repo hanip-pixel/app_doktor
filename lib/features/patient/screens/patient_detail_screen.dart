@@ -58,12 +58,14 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
       text: _patient.keluhanUtama ?? _patient.complaint,
     );
     _anamnesisController = TextEditingController(
-      text: _patient.anamnesis ??
+      text:
+          _patient.anamnesis ??
           _patient.cpptData?.asesmen ??
           'Anamnesis terverifikasi: ${_patient.complaint}',
     );
     _terapiController = TextEditingController(
-      text: _patient.rencanaTerapi ??
+      text:
+          _patient.rencanaTerapi ??
           _patient.cpptData?.plan ??
           'Terapi simptomatik dan edukasi pasien.',
     );
@@ -75,7 +77,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Mode Edit Draft Aktif. Anda sekarang dapat mengubah data rekam medis.'),
+        content: Text(
+          'Mode Edit Draft Aktif. Anda sekarang dapat mengubah data rekam medis.',
+        ),
         backgroundColor: Color(0xFF00897B),
         duration: Duration(seconds: 2),
       ),
@@ -95,7 +99,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     _updatePatientInDummyList(_patient);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Draft pemeriksaan berhasil disimpan sementara (belum difinalisasi).'),
+        content: Text(
+          'Draft pemeriksaan berhasil disimpan sementara (belum difinalisasi).',
+        ),
         backgroundColor: Color(0xFF0284C7),
         duration: Duration(seconds: 2),
       ),
@@ -111,7 +117,10 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           children: [
             Icon(Icons.warning_amber_rounded, color: Color(0xFFEF4444)),
             SizedBox(width: 8),
-            Text('Reset Draft Pemeriksaan?', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              'Reset Draft Pemeriksaan?',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         content: const Text(
@@ -121,21 +130,28 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B))),
+            child: const Text(
+              'Batal',
+              style: TextStyle(color: Color(0xFF64748B)),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
               setState(() {
                 _keluhanController.text = _patient.complaint;
-                _anamnesisController.text = 'Pasien datang untuk kontrol rutin. Tidak ada keluhan sesak atau nyeri dada baru.';
-                _terapiController.text = 'Kontrol rutin, edukasi diet dan olahraga teratur.';
+                _anamnesisController.text =
+                    'Pasien datang untuk kontrol rutin. Tidak ada keluhan sesak atau nyeri dada baru.';
+                _terapiController.text =
+                    'Kontrol rutin, edukasi diet dan olahraga teratur.';
                 _diagnosaList = ['E11.9  Diabetes melitus tipe 2'];
                 _isEditingDraft = false;
               });
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Draft pemeriksaan berhasil di-reset ke data awal.'),
+                  content: Text(
+                    'Draft pemeriksaan berhasil di-reset ke data awal.',
+                  ),
                   backgroundColor: Color(0xFFEF4444),
                   duration: Duration(seconds: 2),
                 ),
@@ -144,7 +160,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF4444),
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             child: const Text('Ya, Reset Draft'),
           ),
@@ -163,8 +181,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   }
 
   void _updatePatientInDummyList(Patient updated) {
-    final index =
-        DummyPatients.todayList.indexWhere((p) => p.id == updated.id);
+    final index = DummyPatients.todayList.indexWhere((p) => p.id == updated.id);
     if (index != -1) {
       DummyPatients.todayList[index] = updated;
     }
@@ -309,8 +326,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Row(
           children: [
-            Icon(Icons.check_circle_outline_rounded,
-                color: Color(0xFF00897B), size: 28),
+            Icon(
+              Icons.check_circle_outline_rounded,
+              color: Color(0xFF00897B),
+              size: 28,
+            ),
             SizedBox(width: 8),
             Text(
               'Selesaikan Pemeriksaan',
@@ -432,10 +452,16 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       ),
                     ),
                     trailing: isAdded
-                        ? const Icon(Icons.check_circle,
-                            color: Color(0xFF00897B), size: 20)
-                        : const Icon(Icons.add_circle_outline,
-                            color: Color(0xFF94A3B8), size: 20),
+                        ? const Icon(
+                            Icons.check_circle,
+                            color: Color(0xFF00897B),
+                            size: 20,
+                          )
+                        : const Icon(
+                            Icons.add_circle_outline,
+                            color: Color(0xFF94A3B8),
+                            size: 20,
+                          ),
                     onTap: () {
                       if (!isAdded) {
                         setState(() => _diagnosaList.add(d));
@@ -500,7 +526,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             // Conditional Content based on Patient Status:
             // Pasien Menunggu dan Pasien Selesai tidak memiliki akses ke Order, Riwayat, & Billing.
             // TabBar hanya ditampilkan saat pasien Sedang Diperiksa (inProgress).
-                       if (_patient.status == PatientStatus.inProgress) ...[
+            if (_patient.status == PatientStatus.inProgress) ...[
               TabBar(
                 controller: _tabController,
                 labelColor: const Color(0xFF00897B),
@@ -532,13 +558,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 ),
               ),
             ] else if (_patient.status == PatientStatus.waiting) ...[
-              Expanded(
-                child: _buildWaitingState(),
-              ),
+              Expanded(child: _buildWaitingState()),
             ] else ...[
-              Expanded(
-                child: _buildDoneState(),
-              ),
+              Expanded(child: _buildDoneState()),
             ],
           ],
         ),
@@ -644,10 +666,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               icon: const Icon(Icons.campaign_rounded, size: 22),
               label: const Text(
                 'Panggil Pasien & Mulai Periksa',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF00897B),
@@ -683,11 +702,18 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   Widget _buildLegacyInProgressState() {
     final patientOrders = DummyOrders.getOrdersByPatient(_patient.id);
     final penunjangResults = patientOrders
-        .where((o) =>
-            o.resultSummary != null || o.status == OrderStatus.resultsReady)
+        .where(
+          (o) =>
+              o.type == OrderType.radiology &&
+              (o.resultSummary != null || o.status == OrderStatus.resultsReady),
+        )
         .toList();
     final pendingRadOrders = patientOrders
-        .where((o) => o.status == OrderStatus.pendingRadiology)
+        .where(
+          (o) =>
+              o.type == OrderType.radiology &&
+              o.status == OrderStatus.pendingRadiology,
+        )
         .toList();
 
     return SingleChildScrollView(
@@ -776,8 +802,10 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: const Color(0xFF00897B),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     minimumSize: const Size(0, 34),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -786,8 +814,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                   ),
                   child: const Text(
                     'Buka Form',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w800, fontSize: 12),
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
                   ),
                 ),
               ],
@@ -874,7 +901,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 isDense: true,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
-                hintText: _isEditingDraft ? 'Ketik keluhan utama pasien...' : null,
+                hintText: _isEditingDraft
+                    ? 'Ketik keluhan utama pasien...'
+                    : null,
               ),
             ),
           ),
@@ -895,7 +924,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                         if (_isListeningAnamnesis) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Mendengarkan rekaman suara dokter...'),
+                              content: Text(
+                                'Mendengarkan rekaman suara dokter...',
+                              ),
                               duration: Duration(seconds: 2),
                               backgroundColor: Color(0xFF00897B),
                             ),
@@ -932,7 +963,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 isDense: true,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
-                hintText: _isEditingDraft ? 'Ketik atau rekam suara anamnesis...' : null,
+                hintText: _isEditingDraft
+                    ? 'Ketik atau rekam suara anamnesis...'
+                    : null,
               ),
             ),
           ),
@@ -953,8 +986,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                         if (_isListeningFisik) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content:
-                                  Text('Merekam catatan suara pemeriksaan fisik...'),
+                              content: Text(
+                                'Merekam catatan suara pemeriksaan fisik...',
+                              ),
                               duration: Duration(seconds: 2),
                               backgroundColor: Color(0xFF00897B),
                             ),
@@ -1062,8 +1096,10 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF8FBFE),
                   borderRadius: BorderRadius.circular(12),
@@ -1157,7 +1193,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 isDense: true,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
-                hintText: _isEditingDraft ? 'Ketik rencana terapi atau obat...' : null,
+                hintText: _isEditingDraft
+                    ? 'Ketik rencana terapi atau obat...'
+                    : null,
               ),
             ),
           ),
@@ -1235,10 +1273,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 icon: const Icon(Icons.check_circle_outline_rounded, size: 20),
                 label: const Text(
                   'Finalisasi & Selesaikan Pemeriksaan',
-                  style: TextStyle(
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0F172A),
@@ -1326,10 +1361,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 icon: const Icon(Icons.check_circle_outline_rounded, size: 20),
                 label: const Text(
                   'Simpan & Finalisasi Pemeriksaan',
-                  style: TextStyle(
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF00897B),
@@ -1352,10 +1384,13 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   // ==========================================
   Widget _buildDoneState() {
     final penunjangResults = DummyOrders.getOrdersByPatient(_patient.id)
-        .where((o) =>
-            o.resultSummary != null ||
-            o.status == OrderStatus.resultsReady ||
-            o.status == OrderStatus.completed)
+        .where(
+          (o) =>
+              o.type == OrderType.radiology &&
+              (o.resultSummary != null ||
+                  o.status == OrderStatus.resultsReady ||
+                  o.status == OrderStatus.completed),
+        )
         .toList();
 
     final cppt = _patient.cpptData;
@@ -1529,39 +1564,43 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _soapBlock(
-                    'S',
-                    'Subjektif / Keluhan',
-                    cppt?.subjektif.isNotEmpty == true
-                        ? cppt!.subjektif
-                        : (_patient.keluhanUtama ?? _patient.complaint),
-                    const Color(0xFF00897B)),
+                  'S',
+                  'Subjektif / Keluhan',
+                  cppt?.subjektif.isNotEmpty == true
+                      ? cppt!.subjektif
+                      : (_patient.keluhanUtama ?? _patient.complaint),
+                  const Color(0xFF00897B),
+                ),
                 const Divider(height: 16, color: Color(0xFFF1F5F9)),
                 _soapBlock(
-                    'O',
-                    'Objektif / Fisik & Penunjang',
-                    cppt?.objektif.isNotEmpty == true
-                        ? cppt!.objektif
-                        : (_patient.pemeriksaanFisik ??
+                  'O',
+                  'Objektif / Fisik & Penunjang',
+                  cppt?.objektif.isNotEmpty == true
+                      ? cppt!.objektif
+                      : (_patient.pemeriksaanFisik ??
                             'Pemeriksaan fisik dalam batas normal.'),
-                    const Color(0xFF2563EB)),
+                  const Color(0xFF2563EB),
+                ),
                 const Divider(height: 16, color: Color(0xFFF1F5F9)),
                 _soapBlock(
-                    'A',
-                    'Asesmen / Analisis Klinis',
-                    cppt?.asesmen.isNotEmpty == true
-                        ? cppt!.asesmen
-                        : (_patient.anamnesis ??
+                  'A',
+                  'Asesmen / Analisis Klinis',
+                  cppt?.asesmen.isNotEmpty == true
+                      ? cppt!.asesmen
+                      : (_patient.anamnesis ??
                             'Kondisi klinis terkompensasi baik.'),
-                    const Color(0xFFD97706)),
+                  const Color(0xFFD97706),
+                ),
                 const Divider(height: 16, color: Color(0xFFF1F5F9)),
                 _soapBlock(
-                    'P',
-                    'Plan / Rencana Terapi & Tindak Lanjut',
-                    cppt?.plan.isNotEmpty == true
-                        ? cppt!.plan
-                        : (_patient.rencanaTerapi ??
+                  'P',
+                  'Plan / Rencana Terapi & Tindak Lanjut',
+                  cppt?.plan.isNotEmpty == true
+                      ? cppt!.plan
+                      : (_patient.rencanaTerapi ??
                             'Lanjutkan terapi dan edukasi.'),
-                    const Color(0xFF7C3AED)),
+                  const Color(0xFF7C3AED),
+                ),
               ],
             ),
           ),
@@ -1600,7 +1639,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                     return Container(
                       margin: const EdgeInsets.only(bottom: 6),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 7),
+                        horizontal: 10,
+                        vertical: 7,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF0FDF4),
                         borderRadius: BorderRadius.circular(8),
@@ -1608,8 +1649,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.check_circle_rounded,
-                              color: Color(0xFF16A34A), size: 16),
+                          const Icon(
+                            Icons.check_circle_rounded,
+                            color: Color(0xFF16A34A),
+                            size: 16,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -1642,7 +1686,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       return Container(
                         margin: const EdgeInsets.only(bottom: 6),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 7),
+                          horizontal: 10,
+                          vertical: 7,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFEFF6FF),
                           borderRadius: BorderRadius.circular(8),
@@ -1650,8 +1696,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.medical_services_rounded,
-                                color: Color(0xFF2563EB), size: 16),
+                            const Icon(
+                              Icons.medical_services_rounded,
+                              color: Color(0xFF2563EB),
+                              size: 16,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -1690,8 +1739,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.medication_rounded,
-                        color: Color(0xFF00897B), size: 20),
+                    const Icon(
+                      Icons.medication_rounded,
+                      color: Color(0xFF00897B),
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Column(
@@ -1725,8 +1777,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.school_rounded,
-                          color: Color(0xFFD97706), size: 20),
+                      const Icon(
+                        Icons.school_rounded,
+                        color: Color(0xFFD97706),
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Column(
@@ -1770,10 +1825,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               icon: const Icon(Icons.print_rounded, size: 20),
               label: const Text(
                 'Lihat / Cetak Resume Medis',
-                style: TextStyle(
-                  fontSize: 14.5,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700),
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFF00897B),
@@ -1790,7 +1842,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   }
 
   Widget _doneVitalCard(
-      String label, String value, IconData icon, Color color) {
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
@@ -1829,16 +1885,14 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     );
   }
 
-  Widget _soapBlock(
-      String letter, String title, String content, Color color) {
+  Widget _soapBlock(String letter, String title, String content, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(6),
@@ -1893,16 +1947,21 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             children: [
               // Header Dialog (PDF Bar)
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
                 decoration: const BoxDecoration(
                   color: Color(0xFF00897B),
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.picture_as_pdf_rounded,
-                        color: Colors.white, size: 24),
+                    const Icon(
+                      Icons.picture_as_pdf_rounded,
+                      color: Colors.white,
+                      size: 24,
+                    ),
                     const SizedBox(width: 10),
                     const Expanded(
                       child: Column(
@@ -1927,7 +1986,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: () => Navigator.pop(ctx),
@@ -1968,7 +2031,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                    color: const Color(0xFFE0F2F1)),
+                                  color: const Color(0xFFE0F2F1),
+                                ),
                               ),
                               child: Image.asset(
                                 'assets/images/logo_rs.png',
@@ -1976,8 +2040,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                                 height: 36,
                                 fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.local_hospital_rounded,
-                                        color: Color(0xFF00897B), size: 28),
+                                    const Icon(
+                                      Icons.local_hospital_rounded,
+                                      color: Color(0xFF00897B),
+                                      size: 28,
+                                    ),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -2043,10 +2110,14 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                             children: [
                               _pdfRow('Nama Pasien', _patient.name),
                               _pdfRow('No. Rekam Medis', _patient.mrNumber),
-                              _pdfRow('Usia / Jenis Kelamin',
-                                  '${_patient.age} Tahun / ${_patient.gender == 'L' ? 'Laki-Laki' : 'Perempuan'}'),
-                              _pdfRow('Penjamin / Asuransi',
-                                  _patient.insurance),
+                              _pdfRow(
+                                'Usia / Jenis Kelamin',
+                                '${_patient.age} Tahun / ${_patient.gender == 'L' ? 'Laki-Laki' : 'Perempuan'}',
+                              ),
+                              _pdfRow(
+                                'Penjamin / Asuransi',
+                                _patient.insurance,
+                              ),
                               if (_patient.noSep != null)
                                 _pdfRow('No. SEP BPJS', _patient.noSep!),
                             ],
@@ -2069,7 +2140,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                               ? _keluhanController.text
                               : _patient.complaint,
                           style: const TextStyle(
-                              fontSize: 12, color: Color(0xFF334155)),
+                            fontSize: 12,
+                            color: Color(0xFF334155),
+                          ),
                         ),
                         const SizedBox(height: 10),
 
@@ -2086,7 +2159,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                         Text(
                           'TD: ${_patient.tekananDarah ?? '130/80 mmHg'}   |   Nadi: ${_patient.nadi ?? '78 x/m'}   |   RR: ${_patient.laju ?? '20 x/m'}   |   Suhu: ${_patient.suhu ?? '36.5 °C'}',
                           style: const TextStyle(
-                              fontSize: 11.5, color: Color(0xFF334155)),
+                            fontSize: 11.5,
+                            color: Color(0xFF334155),
+                          ),
                         ),
                         const SizedBox(height: 10),
 
@@ -2103,9 +2178,10 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                         Text(
                           _diagnosaList.join('\n'),
                           style: const TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF334155),
-                              fontWeight: FontWeight.w600),
+                            fontSize: 12,
+                            color: Color(0xFF334155),
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const SizedBox(height: 10),
 
@@ -2122,7 +2198,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                         Text(
                           _terapiController.text,
                           style: const TextStyle(
-                              fontSize: 12, color: Color(0xFF334155)),
+                            fontSize: 12,
+                            color: Color(0xFF334155),
+                          ),
                         ),
                         const SizedBox(height: 16),
 
@@ -2137,7 +2215,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                                 Text(
                                   'Tervalidasi Digital:',
                                   style: TextStyle(
-                                      fontSize: 10, color: Color(0xFF64748B)),
+                                    fontSize: 10,
+                                    color: Color(0xFF64748B),
+                                  ),
                                 ),
                                 Text(
                                   'Sistem RME RSUDAM',
@@ -2156,11 +2236,15 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                                   padding: const EdgeInsets.all(6),
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: const Color(0xFFCBD5E1)),
+                                      color: const Color(0xFFCBD5E1),
+                                    ),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
-                                  child: const Icon(Icons.qr_code_2_rounded,
-                                      size: 40, color: Color(0xFF1E293B)),
+                                  child: const Icon(
+                                    Icons.qr_code_2_rounded,
+                                    size: 40,
+                                    color: Color(0xFF1E293B),
+                                  ),
                                 ),
                                 const SizedBox(height: 4),
                                 const Text(
@@ -2174,7 +2258,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                                 const Text(
                                   'SIP: 446/1234/SIP.D/2024',
                                   style: TextStyle(
-                                      fontSize: 10, color: Color(0xFF64748B)),
+                                    fontSize: 10,
+                                    color: Color(0xFF64748B),
+                                  ),
                                 ),
                               ],
                             ),
@@ -2201,7 +2287,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
-                                  '📥 Dokumen PDF Resume Medis berhasil diunduh ke memori perangkat.'),
+                                '📥 Dokumen PDF Resume Medis berhasil diunduh ke memori perangkat.',
+                              ),
                               backgroundColor: Color(0xFF00897B),
                               duration: Duration(seconds: 2),
                             ),
@@ -2227,7 +2314,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
-                                  '🖨️ Mengirim dokumen PDF Resume Medis ke printer poli...'),
+                                '🖨️ Mengirim dokumen PDF Resume Medis ke printer poli...',
+                              ),
                               backgroundColor: Color(0xFF00897B),
                               duration: Duration(seconds: 2),
                             ),
@@ -2269,8 +2357,10 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
             ),
           ),
-          const Text(': ',
-              style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+          const Text(
+            ': ',
+            style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+          ),
           Expanded(
             child: Text(
               value,
@@ -2304,10 +2394,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
       decoration: BoxDecoration(
         color: const Color(0xFFF8FBFE),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: const Color(0xFFE8F1F8),
-          width: 1.2,
-        ),
+        border: Border.all(color: const Color(0xFFE8F1F8), width: 1.2),
       ),
       child: child,
     );
@@ -2320,13 +2407,17 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: isListening ? const Color(0xFFFFE4E6) : const Color(0xFFE0F2F1),
+          color: isListening
+              ? const Color(0xFFFFE4E6)
+              : const Color(0xFFE0F2F1),
           shape: BoxShape.circle,
         ),
         child: Icon(
           isListening ? Icons.mic : Icons.mic_none_rounded,
           size: 18,
-          color: isListening ? const Color(0xFFE11D48) : const Color(0xFF00897B),
+          color: isListening
+              ? const Color(0xFFE11D48)
+              : const Color(0xFF00897B),
         ),
       ),
     );
@@ -2358,7 +2449,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     );
   }
 
-   Widget _buildOrderTab() {
+  Widget _buildOrderTab() {
     final patientOrders = DummyOrders.getOrdersByPatient(_patient.id);
 
     return ListView(
@@ -2527,16 +2618,13 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 const Text(
                   'Klik tombol di atas untuk mengirim permintaan Radiologi atau Resep Obat.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF64748B),
-                  ),
+                  style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
                 ),
               ],
             ),
           )
         else
-                    ...patientOrders.map((order) {
+          ...patientOrders.map((order) {
             final isRad = order.type == OrderType.radiology;
             final isMed = order.type == OrderType.medicine;
             final isLab = order.type == OrderType.lab;
@@ -2545,22 +2633,22 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             final badgeColor = isRad
                 ? const Color(0xFF9333EA)
                 : isMed
-                    ? const Color(0xFF0284C7)
-                    : isLab
-                        ? const Color(0xFF059669)
-                        : isSurgery
-                            ? const Color(0xFFE11D48)
-                            : const Color(0xFFEA580C);
+                ? const Color(0xFF0284C7)
+                : isLab
+                ? const Color(0xFF059669)
+                : isSurgery
+                ? const Color(0xFFE11D48)
+                : const Color(0xFFEA580C);
 
             final badgeBg = isRad
                 ? const Color(0xFFF3E8FF)
                 : isMed
-                    ? const Color(0xFFE0F2FE)
-                    : isLab
-                        ? const Color(0xFFD1FAE5)
-                        : isSurgery
-                            ? const Color(0xFFFFE4E6)
-                            : const Color(0xFFFFEDD5);
+                ? const Color(0xFFE0F2FE)
+                : isLab
+                ? const Color(0xFFD1FAE5)
+                : isSurgery
+                ? const Color(0xFFFFE4E6)
+                : const Color(0xFFFFEDD5);
 
             return Container(
               margin: const EdgeInsets.only(bottom: 10),
@@ -2793,10 +2881,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             const Text(
               'Lihat dan kelola seluruh billing tindakan, konsultasi, penunjang, dan resep obat.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: Color(0xFF64748B),
-              ),
+              style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
             ),
             const SizedBox(height: 20),
             SizedBox(
@@ -2876,19 +2961,13 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                     ),
                     Text(
                       'Telah diverifikasi oleh Dokter Spesialis Penunjang',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Color(0xFF047857),
-                      ),
+                      style: TextStyle(fontSize: 11, color: Color(0xFF047857)),
                     ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: const Color(0xFFDCFCE7),
                   borderRadius: BorderRadius.circular(12),
@@ -2897,8 +2976,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.check_circle_rounded,
-                        color: Color(0xFF16A34A), size: 13),
+                    const Icon(
+                      Icons.check_circle_rounded,
+                      color: Color(0xFF16A34A),
+                      size: 13,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '${results.length} Tersedia',
@@ -3015,37 +3097,43 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => _showXrayModal(res),
-                          icon:
-                              const Icon(Icons.image_search_rounded, size: 16),
-                          label: const Text(
-                            'Lihat Citra Rontgen',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
+                      if (res.type == OrderType.radiology)
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () => _showXrayModal(res),
+                            icon: const Icon(
+                              Icons.image_search_rounded,
+                              size: 16,
                             ),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF00897B),
-                            side: const BorderSide(color: Color(0xFF00897B)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                            label: const Text(
+                              'Lihat Citra Rontgen',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 9),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFF00897B),
+                              side: const BorderSide(color: Color(0xFF00897B)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 9),
+                            ),
                           ),
                         ),
-                      ),
                       if (_isEditingDraft &&
-                          !_diagnosaList.any((d) =>
-                              d.contains('Kardiomegali') || d.contains('I20'))) ...[
+                          !_diagnosaList.any(
+                            (d) =>
+                                d.contains('Kardiomegali') || d.contains('I20'),
+                          )) ...[
                         const SizedBox(width: 8),
                         ElevatedButton.icon(
                           onPressed: () {
                             setState(() {
-                              _diagnosaList
-                                  .add('I20.9  Angina pektoris / Kardiomegali');
+                              _diagnosaList.add(
+                                'I20.9  Angina pektoris / Kardiomegali',
+                              );
                             });
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -3110,8 +3198,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 padding: const EdgeInsets.fromLTRB(16, 14, 12, 12),
                 child: Row(
                   children: [
-                    const Icon(Icons.biotech_rounded,
-                        color: Color(0xFF34D399), size: 22),
+                    const Icon(
+                      Icons.biotech_rounded,
+                      color: Color(0xFF34D399),
+                      size: 22,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
@@ -3136,8 +3227,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded,
-                          color: Colors.white70, size: 20),
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
                       onPressed: () => Navigator.pop(ctx),
                     ),
                   ],
@@ -3207,7 +3301,9 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       left: 10,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 3),
+                          horizontal: 6,
+                          vertical: 3,
+                        ),
                         color: Colors.black54,
                         child: const Text(
                           'CTR: 54% (Kardiomegali) | KV: 120 | mAs: 4.0',
@@ -3238,8 +3334,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.verified_user_rounded,
-                              color: Color(0xFF34D399), size: 14),
+                          Icon(
+                            Icons.verified_user_rounded,
+                            color: Color(0xFF34D399),
+                            size: 14,
+                          ),
                           SizedBox(width: 6),
                           Text(
                             'Ekspertise Radiologi Terverifikasi',

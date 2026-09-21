@@ -110,8 +110,10 @@ class _OrderListScreenState extends State<OrderListScreen> {
   }
 
   Widget _buildAppBar() {
+    final canPop = Navigator.canPop(context);
+
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      padding: EdgeInsets.fromLTRB(canPop ? 8 : 16, 12, 16, 12),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(
@@ -120,19 +122,26 @@ class _OrderListScreenState extends State<OrderListScreen> {
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE0F2F1),
-              borderRadius: BorderRadius.circular(10),
+          if (canPop)
+            IconButton(
+              icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF1E293B)),
+              onPressed: () => Navigator.pop(context),
+            )
+          else ...[
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE0F2F1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.receipt_long_rounded,
+                color: Color(0xFF00897B),
+                size: 22,
+              ),
             ),
-            child: const Icon(
-              Icons.receipt_long_rounded,
-              color: Color(0xFF00897B),
-              size: 22,
-            ),
-          ),
-          const SizedBox(width: 12),
+            const SizedBox(width: 12),
+          ],
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
