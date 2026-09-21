@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../../core/widgets/patient_header_card.dart';
 import '../../../core/widgets/status_badge.dart';
+import '../../../data/dummy/dummy_billing.dart';
 import '../../../data/dummy/dummy_patients.dart';
 import '../../../data/dummy/dummy_orders.dart';
+import '../../../data/models/billing_item.dart';
 import '../../../data/models/medical_order.dart';
 import '../../../data/models/patient.dart';
 import '../../radiology_order/screens/radiology_order_screen.dart';
 import '../../medicine_order/screens/medicine_order_screen.dart';
 import '../../billing/screens/billing_screen.dart';
+import '../../billing/widgets/selected_service_tile.dart';
 import '../../examination/screens/examination_screen.dart';
 import '../../examination/widgets/examination_flow_view.dart';
 import '../../lab_order/screens/lab_order_screen.dart';
@@ -107,6 +110,20 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
       ),
     );
   }
+
+  String _formatCurrency(int value) {
+    final str = value.toString();
+    final buffer = StringBuffer();
+    for (int i = 0; i < str.length; i++) {
+      final posFromRight = str.length - i;
+      buffer.write(str[i]);
+      if (posFromRight > 1 && posFromRight % 3 == 1) buffer.write('.');
+    }
+    return 'Rp $buffer';
+  }
+
+  int get _totalJasaPrice =>
+      _patient.services.fold(0, (sum, item) => sum + (item.price ?? 0));
 
   void _confirmResetDraft() {
     showDialog(
@@ -339,7 +356,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           ],
         ),
         content: const Text(
-          'Simpan seluruh hasil rekam medis dan selesaikan pemeriksaan pasien ini? Pasien akan dialihkan ke bagian Farmasi & Billing.',
+          'Simpan seluruh hasil rekam medis dan selesaikan pemeriksaan pasien ini? Pasien akan dialihkan ke bagian Farmasi & Jasa Layanan.',
           style: TextStyle(fontSize: 13.5, color: Color(0xFF475569)),
         ),
         actions: [
@@ -524,7 +541,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             const SizedBox(height: 10),
 
             // Conditional Content based on Patient Status:
-            // Pasien Menunggu dan Pasien Selesai tidak memiliki akses ke Order, Riwayat, & Billing.
+            // Pasien Menunggu dan Pasien Selesai tidak memiliki akses ke Order, Riwayat, & Jasa Layanan.
             // TabBar hanya ditampilkan saat pasien Sedang Diperiksa (inProgress).
             if (_patient.status == PatientStatus.inProgress) ...[
               TabBar(
@@ -544,7 +561,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 tabs: const [
                   Tab(text: 'Pemeriksaan'),
                   Tab(text: 'Order'),
-                  Tab(text: 'Billing'),
+                  Tab(text: 'Jasa Layanan'),
                 ],
               ),
               Expanded(
@@ -553,7 +570,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                   children: [
                     _buildInProgressState(),
                     _buildOrderTab(),
-                    _buildBillingTab(),
+                    _buildJasaLayananTab(),
                   ],
                 ),
               ),
@@ -1723,6 +1740,12 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           ),
           const SizedBox(height: 16),
 
+          // RINCIAN JASA LAYANAN & BILLING TINDAKAN MEDIS (TERVERIFIKASI)
+          _sectionTitle('Rincian Jasa Layanan & Billing Tindakan'),
+          const SizedBox(height: 8),
+          _buildDoneServicesSection(),
+          const SizedBox(height: 16),
+
           // RENCANA TERAPI, RESEP & EDUKASI
           _sectionTitle('Rencana Terapi, Resep & Edukasi'),
           const SizedBox(height: 8),
@@ -2849,66 +2872,530 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     );
   }
 
-  Widget _buildBillingTab() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Color(0xFFF1F6FB),
-                shape: BoxShape.circle,
+  Widget _buildJasaLayananTab() {
+    final services = _patient.services;
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Banner Ringkasan Billing Poli
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF00897B), Color(0xFF00695C)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              child: const Icon(
-                Icons.receipt_long_rounded,
-                size: 40,
-                color: Color(0xFF00897B),
-              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF00897B).withValues(alpha: 0.25),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            const SizedBox(height: 14),
-            const Text(
-              'Rincian Tagihan Pasien',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF0F172A),
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.receipt_long_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Estimasi Billing Tindakan',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.22),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '${services.length} Tindakan',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  _formatCurrency(_totalJasaPrice),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Tarif otomatis disinkronkan ke Kasir & Klaim BPJS / Casemix',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 6),
-            const Text(
-              'Lihat dan kelola seluruh billing tindakan, konsultasi, penunjang, dan resep obat.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: 180,
-              height: 46,
-              child: ElevatedButton(
-                onPressed: () => Navigator.push(
+          ),
+          const SizedBox(height: 16),
+
+          // Action Button: Buka Billing Penuh (Kelola Lengkap)
+          SizedBox(
+            width: double.infinity,
+            height: 46,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final updated = await Navigator.push<Patient>(
                   context,
                   MaterialPageRoute(
                     builder: (_) => BillingScreen(patient: _patient),
                   ),
+                );
+                if (updated != null && mounted) {
+                  setState(() {
+                    _patient = updated;
+                  });
+                  _updatePatientInDummyList(updated);
+                }
+              },
+              icon: const Icon(Icons.tune_rounded, size: 19),
+              label: const Text(
+                'Kelola Lengkap (Tambah / Hapus Tindakan)',
+                style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF00897B),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00897B),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+
+          // Daftar Item Jasa Layanan
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Rincian Tindakan di Poli',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF0F172A),
+                ),
+              ),
+              Text(
+                '${services.length} item dipilih',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF64748B),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+
+          if (services.isEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE0F2F1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.receipt_long_outlined,
+                      color: Color(0xFF00897B),
+                      size: 26,
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Buka Billing',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Belum Ada Jasa Layanan / Tindakan',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Pilih tindakan medis atau jasa konsultasi dari katalog resmi untuk dicatat ke billing pasien.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: Color(0xFF64748B), height: 1.35),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        final updated = await Navigator.push<Patient>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BillingScreen(patient: _patient),
+                          ),
+                        );
+                        if (updated != null && mounted) {
+                          setState(() {
+                            _patient = updated;
+                          });
+                          _updatePatientInDummyList(updated);
+                        }
+                      },
+                      icon: const Icon(Icons.playlist_add_rounded, size: 20),
+                      label: const Text(
+                        'Pilih Tindakan Poli',
+                        style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00897B),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      ActionChip(
+                        avatar: const Icon(Icons.add, size: 14, color: Color(0xFF00897B)),
+                        label: const Text('Konsultasi Spesialis', style: TextStyle(fontSize: 11.5)),
+                        backgroundColor: const Color(0xFFE0F2F1),
+                        side: BorderSide.none,
+                        onPressed: () {
+                          final item = DummyBilling.serviceCatalog.firstWhere(
+                            (s) => s.id == 'svc-001',
+                            orElse: () => DummyBilling.serviceCatalog.first,
+                          );
+                          final updated = List<ServiceItem>.from(_patient.services)..add(item);
+                          final newPatient = _patient.copyWith(services: updated);
+                          setState(() => _patient = newPatient);
+                          _updatePatientInDummyList(newPatient);
+                        },
+                      ),
+                      ActionChip(
+                        avatar: const Icon(Icons.add, size: 14, color: Color(0xFF00897B)),
+                        label: const Text('EKG 12-Lead', style: TextStyle(fontSize: 11.5)),
+                        backgroundColor: const Color(0xFFE0F2F1),
+                        side: BorderSide.none,
+                        onPressed: () {
+                          final item = DummyBilling.serviceCatalog.firstWhere(
+                            (s) => s.id == 'svc-003',
+                            orElse: () => DummyBilling.serviceCatalog.first,
+                          );
+                          final updated = List<ServiceItem>.from(_patient.services)..add(item);
+                          final newPatient = _patient.copyWith(services: updated);
+                          setState(() => _patient = newPatient);
+                          _updatePatientInDummyList(newPatient);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )
+          else ...[
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: services.length,
+              itemBuilder: (context, index) {
+                final service = services[index];
+                return SelectedServiceTile(
+                  service: service,
+                  formatCurrency: _formatCurrency,
+                  onDelete: null, // Hapus dikelola di menu Kelola Lengkap
+                );
+              },
+            ),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF64748B)),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Untuk menambah atau menghapus tindakan, gunakan tombol "Kelola Lengkap" di atas.',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        color: Color(0xFF475569),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDoneServicesSection() {
+    final services = _patient.services;
+
+    if (services.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.receipt_long_outlined,
+                color: Color(0xFF64748B),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Tidak Ada Tindakan Medis Khusus',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF334155),
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'Kunjungan konsultasi rawat jalan standar (tanpa tindakan berbayar tambahan).',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
+      );
+    }
+
+    final total = services.fold(0, (sum, item) => sum + (item.price ?? 0));
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFECFDF5),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: const Color(0xFFA7F3D0)),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check_circle_rounded, color: Color(0xFF059669), size: 13),
+                    SizedBox(width: 4),
+                    Text(
+                      'Tersinkronisasi ke Kasir & BPJS',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF059669),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                '${services.length} Item Tindakan',
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF64748B),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Column(
+            children: services.map((s) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE0F2F1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.medical_information_rounded,
+                        color: Color(0xFF00897B),
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            s.name,
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF0F172A),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE2E8F0),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  s.code,
+                                  style: const TextStyle(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF475569),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                s.category,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xFF64748B),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      s.price != null ? _formatCurrency(s.price!) : 'Gratis',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+          const Divider(height: 18, color: Color(0xFFE2E8F0)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Total Estimasi Billing Dokter:',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF475569),
+                ),
+              ),
+              Text(
+                _formatCurrency(total),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF00897B),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

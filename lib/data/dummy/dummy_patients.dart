@@ -1,4 +1,5 @@
 import '../../core/widgets/status_badge.dart';
+import '../models/billing_item.dart';
 import '../models/examination_entry.dart';
 import '../models/patient.dart';
 
@@ -269,6 +270,32 @@ class DummyPatients {
         catatanEdukasi:
             'Makan teratur porsi kecil tapi sering, hindari makanan asam dan pedas, beri jeda minimal 2 jam setelah makan sebelum tidur.',
       ),
+      services: const [
+        ServiceItem(
+          id: 'svc-001',
+          name: 'Konsultasi Dokter Spesialis Penyakit Dalam',
+          code: 'KON-SPPD-001',
+          standard: ServiceStandard.kris,
+          price: 150000,
+          category: 'Konsultasi',
+        ),
+        ServiceItem(
+          id: 'svc-005',
+          name: 'Injeksi Intravena / Intramuskular',
+          code: 'TIN-INJ-001',
+          standard: ServiceStandard.kris,
+          price: 35000,
+          category: 'Tindakan Medis',
+        ),
+        ServiceItem(
+          id: 'svc-002',
+          name: 'Pemeriksaan Fisik Lengkap Poliklinik',
+          code: '89.7',
+          standard: ServiceStandard.kris,
+          price: 50000,
+          category: 'Tindakan Medis',
+        ),
+      ],
     ),
 
     // -----------------------------------------------------------------

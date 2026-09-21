@@ -1,4 +1,5 @@
 import '../../core/widgets/status_badge.dart';
+import 'billing_item.dart';
 import 'examination_entry.dart';
 
 class Patient {
@@ -30,6 +31,9 @@ class Patient {
   final CpptData? cpptData;
   final TtvData? ttvData;
   final DiagnosaTindakanData? diagnosaTindakanData;
+
+  // Jasa Layanan / Tindakan Medis Terpilih
+  final List<ServiceItem> services;
 
   // Identitas Tambahan Demografis & Layanan
   final String? birthDate;
@@ -76,6 +80,7 @@ class Patient {
     this.cpptData,
     this.ttvData,
     this.diagnosaTindakanData,
+    this.services = const [],
   });
 
   Patient copyWith({
@@ -112,6 +117,7 @@ class Patient {
     CpptData? cpptData,
     TtvData? ttvData,
     DiagnosaTindakanData? diagnosaTindakanData,
+    List<ServiceItem>? services,
   }) {
     return Patient(
       id: id ?? this.id,
@@ -148,6 +154,7 @@ class Patient {
       ttvData: ttvData ?? this.ttvData,
       diagnosaTindakanData:
           diagnosaTindakanData ?? this.diagnosaTindakanData,
+      services: services ?? this.services,
     );
   }
 }
