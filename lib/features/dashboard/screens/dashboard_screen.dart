@@ -4,8 +4,8 @@ import '../../../data/dummy/dummy_notifications.dart';
 import '../../../data/dummy/dummy_orders.dart';
 import '../../../data/dummy/dummy_patients.dart';
 import '../../../data/models/medical_order.dart';
-import '../../billing/screens/billing_screen.dart';
-import '../../medicine_order/screens/medicine_order_screen.dart';
+import '../../billing/screens/service_history_screen.dart';
+import '../../medicine_order/screens/patient_medicine_list_screen.dart';
 import '../../notification/screens/notification_screen.dart';
 import '../../order_monitoring/screens/order_list_screen.dart';
 import '../../patient/screens/patient_history_screen.dart';
@@ -344,23 +344,17 @@ class DashboardScreen extends StatelessWidget {
       ),
       _DashboardService(
         icon: Icons.medical_services_rounded,
-        label: 'Order Obat',
-        subtitle: 'Kelola resep dan e-resep pasien',
+        label: 'Obat Pasien',
+        subtitle: 'Pantau obat yang diberikan ke pasien',
         color: const Color(0xFF2563EB),
-        onTap: () => _open(
-          context,
-          MedicineOrderScreen(patient: DummyPatients.todayList.first),
-        ),
+        onTap: () => _open(context, const PatientMedicineListScreen()),
       ),
       _DashboardService(
         icon: Icons.receipt_long_rounded,
-        label: 'Billing',
-        subtitle: 'Buat dan cek tagihan pasien',
+        label: 'Riwayat Jasa Layanan',
+        subtitle: 'Lihat rekap layanan final pasien',
         color: const Color(0xFFF97316),
-        onTap: () => _open(
-          context,
-          BillingScreen(patient: DummyPatients.todayList.first),
-        ),
+        onTap: () => _open(context, const ServiceHistoryScreen()),
       ),
       _DashboardService(
         icon: Icons.history_edu_rounded,
@@ -368,13 +362,6 @@ class DashboardScreen extends StatelessWidget {
         subtitle: 'Lihat riwayat kunjungan pasien',
         color: const Color(0xFF0D9488),
         onTap: () => _open(context, const PatientHistoryScreen()),
-      ),
-      _DashboardService(
-        icon: Icons.assignment_turned_in_rounded,
-        label: 'Order Layanan',
-        subtitle: 'Pantau daftar order layanan pasien',
-        color: const Color(0xFFDB2777),
-        onTap: () => _open(context, const OrderListScreen()),
       ),
     ];
 
