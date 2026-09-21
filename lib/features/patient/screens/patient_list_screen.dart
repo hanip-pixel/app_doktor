@@ -13,7 +13,8 @@ class PatientListScreen extends StatefulWidget {
 }
 
 class _PatientListScreenState extends State<PatientListScreen> {
-  int _selectedFilter = 0; // 0: Hari ini, 1: Menunggu, 2: Sedang Diperiksa, 3: Selesai
+  int _selectedFilter =
+      0; // 0: Hari ini, 1: Menunggu, 2: Sedang Diperiksa, 3: Selesai
   final _searchController = TextEditingController();
   bool _isLoading = false;
 
@@ -87,15 +88,17 @@ class _PatientListScreenState extends State<PatientListScreen> {
     final totalInProgress = allPatients
         .where((p) => p.status == PatientStatus.inProgress)
         .length;
-    final totalWaiting =
-        allPatients.where((p) => p.status == PatientStatus.waiting).length;
-    final totalDone =
-        allPatients.where((p) => p.status == PatientStatus.done).length;
+    final totalWaiting = allPatients
+        .where((p) => p.status == PatientStatus.waiting)
+        .length;
+    final totalDone = allPatients
+        .where((p) => p.status == PatientStatus.done)
+        .length;
 
     final filteredList = _filteredPatients;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -150,10 +153,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   Container(
                     height: 48,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF1F6FB),
-                      borderRadius: BorderRadius.circular(14),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: const Color(0xFFE2EEF8),
+                        color: const Color(0xFFE2E8F0),
                         width: 1,
                       ),
                     ),
@@ -210,7 +213,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
                         const SizedBox(width: 8),
                         _buildFilterChip('Menunggu ($totalWaiting)', 1),
                         const SizedBox(width: 8),
-                        _buildFilterChip('Sedang Diperiksa ($totalInProgress)', 2),
+                        _buildFilterChip(
+                          'Sedang Diperiksa ($totalInProgress)',
+                          2,
+                        ),
                         const SizedBox(width: 8),
                         _buildFilterChip('Selesai ($totalDone)', 3),
                       ],
@@ -219,7 +225,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
 
             // Patient List
             Expanded(
@@ -227,7 +233,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   ? _buildLoadingSkeleton()
                   : RefreshIndicator(
                       color: const Color(0xFF00897B),
-                      backgroundColor: Colors.white,
+                      backgroundColor: const Color(0xFFF8FAFC),
                       onRefresh: _handleRefresh,
                       child: filteredList.isEmpty
                           ? _buildEmptyState()
@@ -235,21 +241,23 @@ class _PatientListScreenState extends State<PatientListScreen> {
                               physics: const AlwaysScrollableScrollPhysics(
                                 parent: BouncingScrollPhysics(),
                               ),
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                               itemCount: filteredList.length,
                               itemBuilder: (context, index) {
                                 final patient = filteredList[index];
                                 return PatientCard(
                                   patient: patient,
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          PatientDetailScreen(patient: patient),
-                                    ),
-                                  ).then((_) {
-                                    setState(() {});
-                                  }),
+                                  onTap: () =>
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => PatientDetailScreen(
+                                            patient: patient,
+                                          ),
+                                        ),
+                                      ).then((_) {
+                                        setState(() {});
+                                      }),
                                 );
                               },
                             ),
@@ -263,7 +271,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
 
   Widget _buildLoadingSkeleton() {
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
       itemCount: 5,
       itemBuilder: (context, index) {
         return Container(
@@ -272,10 +280,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: const Color(0xFFE8F1F8),
-              width: 1.2,
-            ),
+            border: Border.all(color: const Color(0xFFE8F1F8), width: 1.2),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,10 +352,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF00897B) : const Color(0xFFF1F6FB),
-          borderRadius: BorderRadius.circular(12),
+          color: selected ? const Color(0xFF00897B) : Colors.white,
+          borderRadius: BorderRadius.circular(999),
           border: Border.all(
-            color: selected ? const Color(0xFF00897B) : const Color(0xFFE2EEF8),
+            color: selected ? const Color(0xFF00897B) : const Color(0xFFE2E8F0),
             width: 1,
           ),
         ),
@@ -385,7 +390,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                 color: Color(0xFF94A3B8),
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
             const Text(
               'Pasien Tidak Ditemukan',
               style: TextStyle(

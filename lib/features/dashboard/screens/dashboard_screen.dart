@@ -1,179 +1,89 @@
 import 'package:flutter/material.dart';
-import '../../patient/screens/patient_list_screen.dart';
-import '../../patient/screens/patient_search_screen.dart';
-import '../../patient/screens/patient_history_screen.dart';
-import '../../examination/screens/examination_screen.dart';
-import '../../radiology_order/screens/radiology_order_screen.dart';
-import '../../medicine_order/screens/medicine_order_screen.dart';
+
+import '../../../data/dummy/dummy_notifications.dart';
+import '../../../data/dummy/dummy_orders.dart';
+import '../../../data/dummy/dummy_patients.dart';
+import '../../../data/models/medical_order.dart';
 import '../../billing/screens/billing_screen.dart';
+import '../../medicine_order/screens/medicine_order_screen.dart';
 import '../../notification/screens/notification_screen.dart';
 import '../../order_monitoring/screens/order_list_screen.dart';
-import '../../../data/dummy/dummy_patients.dart';
-import '../../../data/dummy/dummy_orders.dart';
-import '../../../data/dummy/dummy_notifications.dart';
+import '../../patient/screens/patient_history_screen.dart';
+import '../../patient/screens/patient_search_screen.dart';
+import '../../radiology_order/screens/radiology_monitoring_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
+  static const Color _primary = Color(0xFF00897B);
+  static const Color _primaryDark = Color(0xFF00796B);
+  static const Color _ink = Color(0xFF111827);
+  static const Color _muted = Color(0xFF64748B);
+  static const Color _line = Color(0xFFE5EAF0);
+
   @override
   Widget build(BuildContext context) {
-    final patient = DummyPatients.todayList.first;
+    final patients = DummyPatients.todayList;
+    final orders = DummyOrders.list;
+    final pendingOrders = orders
+        .where((order) => order.status != OrderStatus.completed)
+        .length;
+    final readyResults = orders
+        .where((order) => order.status == OrderStatus.resultsReady)
+        .length;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF00897B),
+      backgroundColor: _primary,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF00897B),
-              Color(0xFF00796B),
-            ],
+            colors: [_primary, _primaryDark],
           ),
         ),
         child: SafeArea(
           bottom: false,
           child: Column(
             children: [
-              // Header Section
               _buildHeader(context),
-              const SizedBox(height: 12),
-              // Main White Body Content
+              const SizedBox(height: 0),
               Expanded(
                 child: Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(28),
+                      top: Radius.circular(30),
                     ),
                   ),
                   child: ClipRRect(
                     borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(28),
+                      top: Radius.circular(30),
                     ),
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+                      padding: const EdgeInsets.fromLTRB(20, 22, 20, 118),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Date Section
-                          _buildDateHeader(),
-                          const SizedBox(height: 14),
-
-                          // Summary Cards (3 items)
-                          _buildSummaryStats(context),
-                          const SizedBox(height: 20),
-
-                          // Menu Action Items
-                          _buildMenuItem(
-                            context,
-                            icon: Icons.person_search_rounded,
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFF00BCD4), Color(0xFF009688)],
-                            ),
-                            title: 'Cari & Pantau Pasien',
-                            subtitle: 'Cari data spesifik & pantau tindakan',
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const PatientSearchScreen(),
-                              ),
+                          _buildTodayStats(
+                            totalPatients: patients.length,
+                            pendingOrders: pendingOrders,
+                            readyResults: readyResults,
+                          ),
+                          const SizedBox(height: 28),
+                          const Text(
+                            'Monitoring Layanan',
+                            style: TextStyle(
+                              color: _ink,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.4,
                             ),
                           ),
-                          _buildMenuItem(
-                            context,
-                            icon: Icons.monitor_heart_rounded,
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFF818CF8), Color(0xFF5D5FEF)],
-                            ),
-                            title: 'Pemeriksaan',
-                            subtitle: 'Catat hasil pemeriksaan',
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    ExaminationScreen(patient: patient),
-                              ),
-                            ),
-                          ),
-                          _buildMenuItem(
-                            context,
-                            icon: Icons.biotech_rounded,
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFFD946EF), Color(0xFFA855F7)],
-                            ),
-                            title: 'Order Radiologi',
-                            subtitle: 'Buat permintaan radiologi',
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    RadiologyOrderScreen(patient: patient),
-                              ),
-                            ),
-                          ),
-                          _buildMenuItem(
-                            context,
-                            icon: Icons.local_pharmacy_rounded,
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFF38BDF8), Color(0xFF2563EB)],
-                            ),
-                            title: 'Order Obat',
-                            subtitle: 'Resep dan e-resep',
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    MedicineOrderScreen(patient: patient),
-                              ),
-                            ),
-                          ),
-                          _buildMenuItem(
-                            context,
-                            icon: Icons.receipt_long_rounded,
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFFFB923C), Color(0xFFF97316)],
-                            ),
-                            title: 'Billing',
-                            subtitle: 'Buat billing pasien',
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    BillingScreen(patient: patient),
-                              ),
-                            ),
-                          ),
-                          _buildMenuItem(
-                            context,
-                            icon: Icons.history_edu_rounded,
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFF34D399), Color(0xFF059669)],
-                            ),
-                            title: 'Riwayat Pasien',
-                            subtitle: 'Kunjungan & hasil',
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const PatientHistoryScreen(),
-                              ),
-                            ),
-                          ),
+                          const SizedBox(height: 18),
+                          _buildServiceList(context),
                         ],
                       ),
                     ),
@@ -189,30 +99,31 @@ class DashboardScreen extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+      padding: const EdgeInsets.fromLTRB(28, 22, 20, 22),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Doctor Avatar with ring
           Container(
-            padding: const EdgeInsets.all(2),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.96),
               shape: BoxShape.circle,
             ),
             child: ClipOval(
               child: Image.asset(
                 'assets/images/doctor_avatar.jpg',
-                width: 52,
-                height: 52,
+                width: 48,
+                height: 48,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return const CircleAvatar(
-                    radius: 26,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.person,
-                      color: Color(0xFF00897B),
-                      size: 32,
+                  return Container(
+                    width: 48,
+                    height: 48,
+                    color: Colors.white,
+                    child: const Icon(
+                      Icons.person_rounded,
+                      color: _primary,
+                      size: 28,
                     ),
                   );
                 },
@@ -220,7 +131,6 @@ class DashboardScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 14),
-          // Doctor Info
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,42 +140,32 @@ class DashboardScreen extends StatelessWidget {
                   'Halo,',
                   style: TextStyle(
                     color: Colors.white70,
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 SizedBox(height: 2),
                 Text(
                   'dr. Andi Pratama, Sp.PD',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.2,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.4,
                   ),
                 ),
                 SizedBox(height: 2),
                 Text(
                   'Internis',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w400,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ],
             ),
           ),
-          // Notification Bell with Unread Badge
           IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const NotificationScreen(),
-                ),
-              );
-            },
+            onPressed: () => _open(context, const NotificationScreen()),
             icon: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -276,26 +176,22 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 if (DummyNotifications.unreadCount > 0)
                   Positioned(
-                    right: -2,
-                    top: -2,
+                    right: -4,
+                    top: -4,
                     child: Container(
-                      padding: const EdgeInsets.all(3),
+                      padding: const EdgeInsets.all(4),
                       decoration: const BoxDecoration(
                         color: Color(0xFFEF4444),
                         shape: BoxShape.circle,
                       ),
-                      constraints: const BoxConstraints(
-                        minWidth: 16,
-                        minHeight: 16,
-                      ),
                       child: Text(
-                        '${DummyNotifications.unreadCount}',
+                        DummyNotifications.unreadCount.toString(),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          height: 1,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
@@ -307,77 +203,60 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDateHeader() {
-    return const Row(
+  Widget _buildTodayStats({
+    required int totalPatients,
+    required int pendingOrders,
+    required int readyResults,
+  }) {
+    return Column(
       children: [
-        Icon(
-          Icons.calendar_today_outlined,
-          size: 15,
-          color: Color(0xFF64748B),
+        const Row(
+          children: [
+            Icon(Icons.calendar_today_rounded, color: _muted, size: 18),
+            SizedBox(width: 9),
+            Text(
+              'Rabu, 16 Sep 2026',
+              style: TextStyle(
+                color: _muted,
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
         ),
-        SizedBox(width: 8),
-        Text(
-          'Rabu, 16 Sep 2026',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF64748B),
+        const SizedBox(height: 16),
+        Transform.translate(
+          offset: const Offset(0, -4),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildStatCard(
+                  value: '$totalPatients',
+                  label: 'Pasien Hari Ini',
+                  icon: Icons.groups_rounded,
+                  color: _ink,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildStatCard(
+                  value: '$pendingOrders',
+                  label: 'Order Pending',
+                  icon: Icons.hourglass_top_rounded,
+                  color: const Color(0xFFD97706),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildStatCard(
+                  value: '$readyResults',
+                  label: 'Hasil Baru',
+                  icon: Icons.mark_email_unread_outlined,
+                  color: _primary,
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSummaryStats(BuildContext context) {
-    final patientCount = DummyPatients.todayList.length;
-    final pendingCount = DummyOrders.pendingCount;
-    final resultsCount = DummyOrders.newResultsCount;
-
-    return Row(
-      children: [
-        _buildStatCard(
-          value: '$patientCount',
-          label: 'Pasien Hari Ini',
-          icon: Icons.people_alt_outlined,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const PatientListScreen(),
-              ),
-            );
-          },
-        ),
-        const SizedBox(width: 10),
-        _buildStatCard(
-          value: '$pendingCount',
-          label: 'Order Pending',
-          icon: Icons.hourglass_empty_rounded,
-          valueColor: const Color(0xFFD97706),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const OrderListScreen(initialFilter: 'Pending'),
-              ),
-            );
-          },
-        ),
-        const SizedBox(width: 10),
-        _buildStatCard(
-          value: '$resultsCount',
-          label: 'Hasil Baru',
-          icon: Icons.mark_email_unread_outlined,
-          valueColor: const Color(0xFF059669),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    const OrderListScreen(initialFilter: 'Hasil Baru'),
-              ),
-            );
-          },
         ),
       ],
     );
@@ -386,136 +265,241 @@ class DashboardScreen extends StatelessWidget {
   Widget _buildStatCard({
     required String value,
     required String label,
-    required VoidCallback onTap,
-    IconData? icon,
-    Color? valueColor,
+    required IconData icon,
+    required Color color,
   }) {
-    return Expanded(
-      child: Material(
-        color: const Color(0xFFF1F6FA),
+    return Container(
+      constraints: const BoxConstraints(minHeight: 76),
+      padding: const EdgeInsets.fromLTRB(10, 12, 9, 11),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: valueColor ?? const Color(0xFF1E293B),
-                        height: 1.1,
-                      ),
-                    ),
-                    if (icon != null)
-                      Icon(
-                        icon,
-                        size: 16,
-                        color: valueColor ?? const Color(0xFF94A3B8),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF64748B),
-                    height: 1.2,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.10),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Colors.white.withValues(alpha: 0.80),
+            blurRadius: 1,
+            offset: const Offset(0, -1),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(icon, color: color.withValues(alpha: 0.9), size: 17),
+              const SizedBox(width: 5),
+              Flexible(
+                child: Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    height: 1.05,
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            maxLines: 1,
+            style: const TextStyle(
+              color: _muted,
+              fontSize: 9.8,
+              fontWeight: FontWeight.w800,
+              height: 1.1,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildServiceList(BuildContext context) {
+    final items = [
+      _DashboardService(
+        icon: Icons.person_search_rounded,
+        label: 'Cari & Pantau Pasien',
+        subtitle: 'Cari data pasien dan pantau tindakan',
+        color: const Color(0xFF0891B2),
+        onTap: () => _open(context, const PatientSearchScreen()),
+      ),
+      _DashboardService(
+        icon: Icons.biotech_rounded,
+        label: 'Monitoring Radiologi',
+        subtitle: 'Pantau status dan hasil pemeriksaan',
+        color: const Color(0xFF7C3AED),
+        onTap: () => _open(context, const RadiologyMonitoringScreen()),
+      ),
+      _DashboardService(
+        icon: Icons.medical_services_rounded,
+        label: 'Order Obat',
+        subtitle: 'Kelola resep dan e-resep pasien',
+        color: const Color(0xFF2563EB),
+        onTap: () => _open(
+          context,
+          MedicineOrderScreen(patient: DummyPatients.todayList.first),
+        ),
+      ),
+      _DashboardService(
+        icon: Icons.receipt_long_rounded,
+        label: 'Billing',
+        subtitle: 'Buat dan cek tagihan pasien',
+        color: const Color(0xFFF97316),
+        onTap: () => _open(
+          context,
+          BillingScreen(patient: DummyPatients.todayList.first),
+        ),
+      ),
+      _DashboardService(
+        icon: Icons.history_edu_rounded,
+        label: 'Riwayat Pasien',
+        subtitle: 'Lihat riwayat kunjungan pasien',
+        color: const Color(0xFF0D9488),
+        onTap: () => _open(context, const PatientHistoryScreen()),
+      ),
+      _DashboardService(
+        icon: Icons.assignment_turned_in_rounded,
+        label: 'Order Layanan',
+        subtitle: 'Pantau daftar order layanan pasien',
+        color: const Color(0xFFDB2777),
+        onTap: () => _open(context, const OrderListScreen()),
+      ),
+    ];
+
+    return Column(
+      children: [
+        for (var i = 0; i < items.length; i++) ...[
+          _buildServiceCard(items[i]),
+          if (i != items.length - 1) const SizedBox(height: 12),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildServiceCard(_DashboardService item) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: item.onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Ink(
+          padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFBFCFE),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: _line),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF0F172A).withValues(alpha: 0.055),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [item.color.withValues(alpha: 0.92), item.color],
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: item.color.withValues(alpha: 0.22),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Icon(item.icon, color: Colors.white, size: 27),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      item.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: _ink,
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w900,
+                        height: 1.15,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      item.subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: _muted,
+                        fontSize: 12.2,
+                        fontWeight: FontWeight.w600,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: item.color.withValues(alpha: 0.08),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  color: item.color,
+                  size: 22,
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildMenuItem(
-    BuildContext context, {
-    required IconData icon,
-    required Gradient gradient,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FBFE),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xFFE8F1F8),
-          width: 1.2,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(18),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Row(
-              children: [
-                // Squircle Icon
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    gradient: gradient,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Center(
-                    child: Icon(icon, color: Colors.white, size: 26),
-                  ),
-                ),
-                const SizedBox(width: 14),
-                // Titles
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 15.5,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF1E293B),
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        subtitle,
-                        style: const TextStyle(
-                          fontSize: 12.5,
-                          color: Color(0xFF64748B),
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Arrow
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  color: Color(0xFF94A3B8),
-                  size: 24,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  void _open(BuildContext context, Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
   }
+}
+
+class _DashboardService {
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _DashboardService({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
 }
