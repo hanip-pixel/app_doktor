@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -114,10 +115,10 @@ class ProfileScreen extends StatelessWidget {
                             fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) =>
                                 const Icon(
-                              Icons.local_hospital_rounded,
-                              size: 16,
-                              color: Color(0xFF00897B),
-                            ),
+                                  Icons.local_hospital_rounded,
+                                  size: 16,
+                                  color: Color(0xFF00897B),
+                                ),
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -139,10 +140,10 @@ class ProfileScreen extends StatelessWidget {
                       icon: Icons.person_outline_rounded,
                       title: 'Ubah Profil',
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Menu Ubah Profil dibuka'),
-                            duration: Duration(seconds: 1),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const EditProfileScreen(),
                           ),
                         );
                       },
@@ -212,8 +213,7 @@ class ProfileScreen extends StatelessWidget {
     required VoidCallback onTap,
     bool isDanger = false,
   }) {
-    final color =
-        isDanger ? const Color(0xFFEF4444) : const Color(0xFF1E293B);
+    final color = isDanger ? const Color(0xFFEF4444) : const Color(0xFF1E293B);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -221,9 +221,7 @@ class ProfileScreen extends StatelessWidget {
         color: const Color(0xFFF8FBFE),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDanger
-              ? const Color(0xFFFEE2E2)
-              : const Color(0xFFE8F1F8),
+          color: isDanger ? const Color(0xFFFEE2E2) : const Color(0xFFE8F1F8),
           width: 1.2,
         ),
       ),
@@ -236,11 +234,7 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                Icon(
-                  icon,
-                  color: color,
-                  size: 22,
-                ),
+                Icon(icon, color: color, size: 22),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
