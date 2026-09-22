@@ -44,10 +44,12 @@ class _OrderListScreenState extends State<OrderListScreen> {
     // Apply Category/Status Filter
     if (_selectedFilter == 'Pending') {
       list = list
-          .where((o) =>
-              o.status == OrderStatus.pendingPharmacy ||
-              o.status == OrderStatus.pendingRadiology ||
-              o.status == OrderStatus.pendingBilling)
+          .where(
+            (o) =>
+                o.status == OrderStatus.pendingPharmacy ||
+                o.status == OrderStatus.pendingRadiology ||
+                o.status == OrderStatus.pendingBilling,
+          )
           .toList();
     } else if (_selectedFilter == 'Hasil Baru') {
       list = list.where((o) => o.status == OrderStatus.resultsReady).toList();
@@ -63,10 +65,13 @@ class _OrderListScreenState extends State<OrderListScreen> {
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
       list = list.where((o) {
-        final matchPatient = o.patient.name.toLowerCase().contains(q) ||
+        final matchPatient =
+            o.patient.name.toLowerCase().contains(q) ||
             o.patient.mrNumber.toLowerCase().contains(q);
         final matchNumber = o.orderNumber.toLowerCase().contains(q);
-        final matchItems = o.items.any((item) => item.toLowerCase().contains(q));
+        final matchItems = o.items.any(
+          (item) => item.toLowerCase().contains(q),
+        );
         return matchPatient || matchNumber || matchItems;
       }).toList();
     }
@@ -85,6 +90,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
           children: [
             // Top App Bar
             _buildAppBar(),
+            const SizedBox(height: 14),
 
             // Search Bar & Filter Chips
             _buildSearchAndFilters(),
@@ -110,10 +116,10 @@ class _OrderListScreenState extends State<OrderListScreen> {
   }
 
   Widget _buildAppBar() {
-    final canPop = Navigator.canPop(context);
+    final totalOrders = _filteredOrders.length;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(canPop ? 8 : 16, 12, 16, 12),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(
@@ -122,26 +128,19 @@ class _OrderListScreenState extends State<OrderListScreen> {
       ),
       child: Row(
         children: [
-          if (canPop)
-            IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF1E293B)),
-              onPressed: () => Navigator.pop(context),
-            )
-          else ...[
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE0F2F1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.receipt_long_rounded,
-                color: Color(0xFF00897B),
-                size: 22,
-              ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE0F2F1),
+              borderRadius: BorderRadius.circular(10),
             ),
-            const SizedBox(width: 12),
-          ],
+            child: const Icon(
+              Icons.receipt_long_rounded,
+              color: Color(0xFF00897B),
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 12),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,11 +156,8 @@ class _OrderListScreenState extends State<OrderListScreen> {
                 ),
                 SizedBox(height: 1),
                 Text(
-                  'Lacak status resep, radiologi, dan billing',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF64748B),
-                  ),
+                  'Status resep, radiologi, dan billing',
+                  style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
                 ),
               ],
             ),
@@ -173,7 +169,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              '${DummyOrders.list.length} Total',
+              '$totalOrders Total',
               style: const TextStyle(
                 fontSize: 11.5,
                 fontWeight: FontWeight.w700,
@@ -187,28 +183,30 @@ class _OrderListScreenState extends State<OrderListScreen> {
   }
 
   Widget _buildSearchAndFilters() {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           // Search Input
-          Container(
-            height: 42,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(12),
-            ),
+          Material(
+            color: Colors.white,
+            elevation: 8,
+            shadowColor: const Color(0xFF0F172A).withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(28),
+            clipBehavior: Clip.antiAlias,
             child: TextField(
               controller: _searchController,
+              cursorColor: const Color(0xFF00897B),
               onChanged: (val) => setState(() => _searchQuery = val),
-              style: const TextStyle(fontSize: 13.5, color: Color(0xFF1E293B)),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF0F172A)),
               decoration: InputDecoration(
-                isDense: true,
-                hintText: 'Cari pasien, no. RM, no. order, atau item...',
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Cari pasien / No. RM / No. order',
                 hintStyle: const TextStyle(
-                  fontSize: 13,
                   color: Color(0xFF94A3B8),
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w400,
                 ),
                 prefixIcon: const Icon(
                   Icons.search_rounded,
@@ -217,19 +215,46 @@ class _OrderListScreenState extends State<OrderListScreen> {
                 ),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, size: 16),
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          size: 18,
+                          color: Color(0xFF64748B),
+                        ),
                         onPressed: () {
                           _searchController.clear();
                           setState(() => _searchQuery = '');
                         },
                       )
                     : null,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 11),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28),
+                  borderSide: const BorderSide(
+                    color: Color(0xFFF1F5F9),
+                    width: 0.8,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28),
+                  borderSide: const BorderSide(
+                    color: Color(0xFFF1F5F9),
+                    width: 0.8,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF99D8D0),
+                    width: 1,
+                  ),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 12,
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
           // Filter Chips
           SingleChildScrollView(
@@ -264,8 +289,9 @@ class _OrderListScreenState extends State<OrderListScreen> {
                         cat,
                         style: TextStyle(
                           fontSize: 12.5,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w600,
+                          fontWeight: isSelected
+                              ? FontWeight.w700
+                              : FontWeight.w600,
                           color: isSelected
                               ? Colors.white
                               : const Color(0xFF64748B),
@@ -326,8 +352,11 @@ class _OrderListScreenState extends State<OrderListScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(typeConfig.icon,
-                              size: 14, color: typeConfig.color),
+                          Icon(
+                            typeConfig.icon,
+                            size: 14,
+                            color: typeConfig.color,
+                          ),
                           const SizedBox(width: 5),
                           Text(
                             order.typeLabel,
@@ -524,8 +553,11 @@ class _OrderListScreenState extends State<OrderListScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(statusConfig.icon,
-                              size: 14, color: statusConfig.color),
+                          Icon(
+                            statusConfig.icon,
+                            size: 14,
+                            color: statusConfig.color,
+                          ),
                           const SizedBox(width: 5),
                           Text(
                             order.statusLabel,
@@ -631,8 +663,11 @@ class _OrderListScreenState extends State<OrderListScreen> {
                         color: typeConfig.bgColor,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(typeConfig.icon,
-                          color: typeConfig.color, size: 24),
+                      child: Icon(
+                        typeConfig.icon,
+                        color: typeConfig.color,
+                        size: 24,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -681,8 +716,11 @@ class _OrderListScreenState extends State<OrderListScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(statusConfig.icon,
-                          color: statusConfig.color, size: 22),
+                      Icon(
+                        statusConfig.icon,
+                        color: statusConfig.color,
+                        size: 22,
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Column(
@@ -700,8 +738,9 @@ class _OrderListScreenState extends State<OrderListScreen> {
                               'Waktu Order: ${order.orderTime}',
                               style: TextStyle(
                                 fontSize: 12,
-                                color:
-                                    statusConfig.color.withValues(alpha: 0.85),
+                                color: statusConfig.color.withValues(
+                                  alpha: 0.85,
+                                ),
                               ),
                             ),
                           ],
@@ -917,10 +956,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12.5,
-            color: Color(0xFF64748B),
-          ),
+          style: const TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
         ),
         Text(
           value,
@@ -966,10 +1002,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
             const Text(
               'Tidak ada order yang sesuai dengan filter atau kata kunci pencarian.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: Color(0xFF64748B),
-              ),
+              style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
             ),
           ],
         ),
@@ -977,7 +1010,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
     );
   }
 
-    _TypeConfig _getTypeConfig(OrderType type) {
+  _TypeConfig _getTypeConfig(OrderType type) {
     switch (type) {
       case OrderType.radiology:
         return _TypeConfig(
@@ -1065,11 +1098,7 @@ class _TypeConfig {
   final Color color;
   final Color bgColor;
 
-  _TypeConfig({
-    required this.icon,
-    required this.color,
-    required this.bgColor,
-  });
+  _TypeConfig({required this.icon, required this.color, required this.bgColor});
 }
 
 class _StatusConfig {

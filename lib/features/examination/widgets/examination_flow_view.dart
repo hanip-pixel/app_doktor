@@ -5,16 +5,14 @@ import '../../../data/dummy/dummy_patients.dart';
 import '../../../data/models/examination_entry.dart';
 import '../../../data/models/medical_order.dart';
 import '../../../data/models/patient.dart';
+import '../../billing/screens/billing_screen.dart';
+import '../../medicine_order/screens/medicine_order_screen.dart';
 
 class ExaminationFlowView extends StatefulWidget {
   final Patient patient;
   final ValueChanged<Patient>? onSaved;
 
-  const ExaminationFlowView({
-    super.key,
-    required this.patient,
-    this.onSaved,
-  });
+  const ExaminationFlowView({super.key, required this.patient, this.onSaved});
 
   @override
   State<ExaminationFlowView> createState() => _ExaminationFlowViewState();
@@ -143,7 +141,8 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
 
     // Untuk layanan CPPT: minimal 1 komponen SOAP harus terisi
     if (_selectedServices.contains(ExaminationServiceType.cppt)) {
-      final hasCppt = _subjektifController.text.trim().isNotEmpty ||
+      final hasCppt =
+          _subjektifController.text.trim().isNotEmpty ||
           _objektifController.text.trim().isNotEmpty ||
           _asesmenController.text.trim().isNotEmpty ||
           _planController.text.trim().isNotEmpty;
@@ -152,7 +151,8 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
 
     // Untuk layanan TTV: minimal 1 parameter TTV harus terisi
     if (_selectedServices.contains(ExaminationServiceType.ttv)) {
-      final hasTtv = _tdController.text.trim().isNotEmpty ||
+      final hasTtv =
+          _tdController.text.trim().isNotEmpty ||
           _nadiController.text.trim().isNotEmpty ||
           _rrController.text.trim().isNotEmpty ||
           _suhuController.text.trim().isNotEmpty ||
@@ -164,7 +164,8 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
 
     // Untuk layanan Diagnosa & Tindakan: minimal 1 diagnosa / tindakan / terapi / edukasi terisi
     if (_selectedServices.contains(ExaminationServiceType.diagnosaTindakan)) {
-      final hasDiag = _diagnosaList.isNotEmpty ||
+      final hasDiag =
+          _diagnosaList.isNotEmpty ||
           _tindakanList.isNotEmpty ||
           _terapiController.text.trim().isNotEmpty ||
           _edukasiController.text.trim().isNotEmpty;
@@ -179,8 +180,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content:
-              Text('Silakan pilih minimal 1 layanan pemeriksaan terlebih dahulu.'),
+          content: Text(
+            'Silakan pilih minimal 1 layanan pemeriksaan terlebih dahulu.',
+          ),
           backgroundColor: Color(0xFFE11D48),
           duration: Duration(seconds: 2),
         ),
@@ -193,7 +195,8 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-              'Silakan lengkapi isi formulir pemeriksaan yang dipilih terlebih dahulu.'),
+            'Silakan lengkapi isi formulir pemeriksaan yang dipilih terlebih dahulu.',
+          ),
           backgroundColor: Color(0xFFE11D48),
           duration: Duration(seconds: 2),
         ),
@@ -294,10 +297,16 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                       ),
                     ),
                     trailing: isAdded
-                        ? const Icon(Icons.check_circle,
-                            color: Color(0xFF00897B), size: 20)
-                        : const Icon(Icons.add_circle_outline,
-                            color: Color(0xFF94A3B8), size: 20),
+                        ? const Icon(
+                            Icons.check_circle,
+                            color: Color(0xFF00897B),
+                            size: 20,
+                          )
+                        : const Icon(
+                            Icons.add_circle_outline,
+                            color: Color(0xFF94A3B8),
+                            size: 20,
+                          ),
                     onTap: () {
                       if (!isAdded) {
                         setState(() => _diagnosaList.add(d));
@@ -374,10 +383,16 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                       ),
                     ),
                     trailing: isAdded
-                        ? const Icon(Icons.check_circle,
-                            color: Color(0xFF2563EB), size: 20)
-                        : const Icon(Icons.add_circle_outline,
-                            color: Color(0xFF94A3B8), size: 20),
+                        ? const Icon(
+                            Icons.check_circle,
+                            color: Color(0xFF2563EB),
+                            size: 20,
+                          )
+                        : const Icon(
+                            Icons.add_circle_outline,
+                            color: Color(0xFF94A3B8),
+                            size: 20,
+                          ),
                     onTap: () {
                       if (!isAdded) {
                         setState(() => _tindakanList.add(t));
@@ -401,7 +416,11 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Row(
           children: [
-            Icon(Icons.delete_sweep_rounded, color: Color(0xFFDC2626), size: 26),
+            Icon(
+              Icons.delete_sweep_rounded,
+              color: Color(0xFFDC2626),
+              size: 26,
+            ),
             SizedBox(width: 8),
             Text(
               'Reset Draft Pemeriksaan?',
@@ -416,7 +435,10 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B))),
+            child: const Text(
+              'Batal',
+              style: TextStyle(color: Color(0xFF64748B)),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -472,8 +494,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
       plan: _planController.text,
     );
     final ttv = TtvData(
-      tekananDarah:
-          _tdController.text.isNotEmpty ? _tdController.text : '120/80',
+      tekananDarah: _tdController.text.isNotEmpty
+          ? _tdController.text
+          : '120/80',
       nadi: _nadiController.text.isNotEmpty ? _nadiController.text : '80',
       lajuNafas: _rrController.text.isNotEmpty ? _rrController.text : '18',
       suhu: _suhuController.text.isNotEmpty ? _suhuController.text : '36.5',
@@ -515,77 +538,180 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
       DummyPatients.todayList[idx] = updated;
     }
 
-    if (widget.onSaved != null) {
-      widget.onSaved!(updated);
-    }
+    setState(() => _patient = updated);
+    _showPostExaminationActionDialog(updated);
+  }
+
+  void _showPostExaminationActionDialog(Patient updatedPatient) {
+    final hasRecordedActions = _tindakanList.isNotEmpty;
+    final rootNavigator = Navigator.of(context, rootNavigator: true);
 
     showDialog(
       context: context,
+      useRootNavigator: true,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        content: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+        contentPadding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                color: Color(0xFFECFDF5),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.check_circle_rounded,
+                color: Color(0xFF059669),
+                size: 46,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Pemeriksaan Berhasil Disimpan',
+              style: TextStyle(
+                fontSize: 16.5,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0F172A),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Data rekam medis ${_patient.name} telah tersimpan. Pilih tindak lanjut untuk resep, jasa layanan, atau finalisasi kunjungan.',
+              style: const TextStyle(
+                fontSize: 12.5,
+                color: Color(0xFF64748B),
+                height: 1.35,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            if (hasRecordedActions) ...[
+              const SizedBox(height: 12),
               Container(
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFECFDF5),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check_circle_rounded,
-                  color: Color(0xFF059669),
-                  size: 50,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Pemeriksaan Berhasil Disimpan!',
-                style: TextStyle(
-                  fontSize: 16.5,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF0F172A),
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Data rekam medis ${_patient.name} telah tersimpan dan status pemeriksaan selesai.',
-                style: const TextStyle(
-                  fontSize: 12.5,
-                  color: Color(0xFF64748B),
-                  height: 1.35,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 18),
-              SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00897B),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFFBEB),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFFDE68A)),
+                ),
+                child: const Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      color: Color(0xFFD97706),
+                      size: 18,
                     ),
-                  ),
-                  child: const Text(
-                    'Selesai & Tutup',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Tindakan yang dicatat di pemeriksaan belum otomatis masuk tagihan. Buka Jasa Layanan untuk menambahkan tindakan billing.',
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Color(0xFF92400E),
+                          height: 1.35,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
+            const SizedBox(height: 18),
+            _buildPostActionButton(
+              icon: Icons.medication_rounded,
+              label: 'Buat Resep Obat',
+              backgroundColor: const Color(0xFF00897B),
+              foregroundColor: Colors.white,
+              onPressed: () {
+                rootNavigator.pop();
+                widget.onSaved?.call(updatedPatient);
+                rootNavigator.push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        MedicineOrderScreen(patient: updatedPatient),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            _buildPostActionButton(
+              icon: Icons.payments_rounded,
+              label: 'Tambah Jasa Layanan',
+              backgroundColor: const Color(0xFF2563EB),
+              foregroundColor: Colors.white,
+              onPressed: () async {
+                rootNavigator.pop();
+                widget.onSaved?.call(updatedPatient);
+                final billingUpdatedPatient = await rootNavigator.push<Patient>(
+                  MaterialPageRoute(
+                    builder: (_) => BillingScreen(patient: updatedPatient),
+                  ),
+                );
+                if (billingUpdatedPatient != null && mounted) {
+                  setState(() => _patient = billingUpdatedPatient);
+                  widget.onSaved?.call(billingUpdatedPatient);
+                }
+              },
+            ),
+            const SizedBox(height: 10),
+            _buildPostActionButton(
+              icon: Icons.check_circle_outline_rounded,
+              label: 'Selesaikan Tanpa Resep',
+              backgroundColor: const Color(0xFFF1F5F9),
+              foregroundColor: const Color(0xFF0F172A),
+              onPressed: () {
+                rootNavigator.pop();
+                widget.onSaved?.call(updatedPatient);
+                if (rootNavigator.canPop()) {
+                  rootNavigator.pop();
+                }
+              },
+            ),
+            TextButton(
+              onPressed: () => rootNavigator.pop(),
+              child: const Text(
+                'Tutup',
+                style: TextStyle(
+                  color: Color(0xFF64748B),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPostActionButton({
+    required IconData icon,
+    required String label,
+    required Color backgroundColor,
+    required Color foregroundColor,
+    required VoidCallback onPressed,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 19),
+        label: Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: backgroundColor,
+          foregroundColor: foregroundColor,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
@@ -598,16 +724,20 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
   Widget _buildRadiologyAlertBanner() {
     final patientOrders = DummyOrders.getOrdersByPatient(_patient.id);
     final readyOrders = patientOrders
-        .where((o) =>
-            o.type == OrderType.radiology &&
-            (o.status == OrderStatus.resultsReady ||
-                o.resultSummary != null ||
-                o.status == OrderStatus.completed))
+        .where(
+          (o) =>
+              o.type == OrderType.radiology &&
+              (o.status == OrderStatus.resultsReady ||
+                  o.resultSummary != null ||
+                  o.status == OrderStatus.completed),
+        )
         .toList();
     final pendingOrders = patientOrders
-        .where((o) =>
-            o.type == OrderType.radiology &&
-            o.status == OrderStatus.pendingRadiology)
+        .where(
+          (o) =>
+              o.type == OrderType.radiology &&
+              o.status == OrderStatus.pendingRadiology,
+        )
         .toList();
 
     if (readyOrders.isEmpty && pendingOrders.isEmpty) {
@@ -670,7 +800,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                           const SizedBox(width: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFDCFCE7),
                               borderRadius: BorderRadius.circular(10),
@@ -803,8 +935,11 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                 color: const Color(0xFFD97706),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.hourglass_top_rounded,
-                  color: Colors.white, size: 16),
+              child: const Icon(
+                Icons.hourglass_top_rounded,
+                color: Colors.white,
+                size: 16,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -856,8 +991,10 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
             children: [
               // Header
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFF6D28D9), Color(0xFF7C3AED)],
@@ -866,8 +1003,11 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.biotech_rounded,
-                        color: Colors.white, size: 22),
+                    const Icon(
+                      Icons.biotech_rounded,
+                      color: Colors.white,
+                      size: 22,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
@@ -892,8 +1032,11 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close,
-                          color: Colors.white, size: 20),
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: () => Navigator.pop(ctx),
@@ -917,7 +1060,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                              color: const Color(0xFF334155), width: 1.5),
+                            color: const Color(0xFF334155),
+                            width: 1.5,
+                          ),
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: Stack(
@@ -929,9 +1074,10 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                               errorBuilder: (context, error, stackTrace) {
                                 return const Center(
                                   child: Icon(
-                                      Icons.image_not_supported_rounded,
-                                      color: Colors.white54,
-                                      size: 40),
+                                    Icons.image_not_supported_rounded,
+                                    color: Colors.white54,
+                                    size: 40,
+                                  ),
                                 );
                               },
                             ),
@@ -941,7 +1087,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                               left: 10,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 3),
+                                  horizontal: 6,
+                                  vertical: 3,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.black.withValues(alpha: 0.6),
                                   borderRadius: BorderRadius.circular(4),
@@ -962,7 +1110,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                               right: 8,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 3),
+                                  horizontal: 6,
+                                  vertical: 3,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.black.withValues(alpha: 0.7),
                                   borderRadius: BorderRadius.circular(6),
@@ -970,14 +1120,23 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.zoom_in_rounded,
-                                        color: Colors.white, size: 16),
+                                    Icon(
+                                      Icons.zoom_in_rounded,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
                                     SizedBox(width: 8),
-                                    Icon(Icons.contrast_rounded,
-                                        color: Colors.white, size: 16),
+                                    Icon(
+                                      Icons.contrast_rounded,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
                                     SizedBox(width: 8),
-                                    Icon(Icons.fullscreen_rounded,
-                                        color: Colors.white, size: 16),
+                                    Icon(
+                                      Icons.fullscreen_rounded,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -1122,8 +1281,11 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle_rounded,
-                color: Colors.white, size: 18),
+            const Icon(
+              Icons.check_circle_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
             const SizedBox(width: 8),
             const Expanded(
               child: Text(
@@ -1232,17 +1394,21 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
               color: isCurrent
                   ? Colors.white
                   : (isPassed
-                      ? const Color(0xFF00897B)
-                      : const Color(0xFF94A3B8)),
+                        ? const Color(0xFF00897B)
+                        : const Color(0xFF94A3B8)),
               shape: BoxShape.circle,
             ),
             child: isPassed
                 ? const Icon(Icons.check, size: 8, color: Colors.white)
                 : (isCurrent
-                    ? const Center(
-                        child: Icon(Icons.circle,
-                            size: 6, color: Color(0xFF00897B)))
-                    : null),
+                      ? const Center(
+                          child: Icon(
+                            Icons.circle,
+                            size: 6,
+                            color: Color(0xFF00897B),
+                          ),
+                        )
+                      : null),
           ),
           const SizedBox(width: 5),
 
@@ -1255,8 +1421,8 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
               color: isCurrent
                   ? Colors.white
                   : (isPassed
-                      ? const Color(0xFF00897B)
-                      : const Color(0xFF64748B)),
+                        ? const Color(0xFF00897B)
+                        : const Color(0xFF64748B)),
             ),
           ),
         ],
@@ -1273,8 +1439,7 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
         height: 2,
         margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          color:
-              isPassed ? const Color(0xFF00897B) : const Color(0xFFCBD5E1),
+          color: isPassed ? const Color(0xFF00897B) : const Color(0xFFCBD5E1),
           borderRadius: BorderRadius.circular(2),
         ),
       ),
@@ -1316,8 +1481,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                               ExaminationServiceType.values.length) {
                             _selectedServices.clear();
                           } else {
-                            _selectedServices
-                                .addAll(ExaminationServiceType.values);
+                            _selectedServices.addAll(
+                              ExaminationServiceType.values,
+                            );
                           }
                         });
                       },
@@ -1343,10 +1509,14 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFFF8FAFC) : Colors.white,
+                      color: isSelected
+                          ? const Color(0xFFF8FAFC)
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: isSelected ? type.color : const Color(0xFFE2E8F0),
+                        color: isSelected
+                            ? type.color
+                            : const Color(0xFFE2E8F0),
                         width: isSelected ? 1.6 : 1.1,
                       ),
                     ),
@@ -1374,14 +1544,16 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                                   color: type.bgColor,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Icon(type.icon,
-                                    color: type.color, size: 22),
+                                child: Icon(
+                                  type.icon,
+                                  color: type.color,
+                                  size: 22,
+                                ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       type.title,
@@ -1420,8 +1592,11 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                                   ),
                                 ),
                                 child: isSelected
-                                    ? const Icon(Icons.check,
-                                        size: 14, color: Colors.white)
+                                    ? const Icon(
+                                        Icons.check,
+                                        size: 14,
+                                        color: Colors.white,
+                                      )
                                     : null,
                               ),
                             ],
@@ -1503,8 +1678,10 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
 
                 // Voice Dictation Bar
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF1F5F9),
@@ -1539,7 +1716,8 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                       InkWell(
                         onTap: () {
                           setState(
-                              () => _isListeningVoice = !_isListeningVoice);
+                            () => _isListeningVoice = !_isListeningVoice,
+                          );
                         },
                         child: Text(
                           _isListeningVoice ? 'Stop' : 'Mulai Dikte',
@@ -1563,8 +1741,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                 if (_selectedServices.contains(ExaminationServiceType.ttv))
                   _buildTtvFormCard(),
 
-                if (_selectedServices
-                    .contains(ExaminationServiceType.diagnosaTindakan))
+                if (_selectedServices.contains(
+                  ExaminationServiceType.diagnosaTindakan,
+                ))
                   _buildDiagnosaTindakanFormCard(),
               ],
             ),
@@ -1598,7 +1777,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                       child: Text(
                         'Ubah Layanan',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 13.5),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13.5,
+                        ),
                         maxLines: 1,
                       ),
                     ),
@@ -1670,8 +1851,11 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
         children: [
           const Row(
             children: [
-              Icon(Icons.history_edu_rounded,
-                  color: Color(0xFF00897B), size: 18),
+              Icon(
+                Icons.history_edu_rounded,
+                color: Color(0xFF00897B),
+                size: 18,
+              ),
               SizedBox(width: 6),
               Text(
                 'CPPT (SOAP)',
@@ -1688,7 +1872,8 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
             tag: 'S',
             label: 'Subjektif (Keluhan)',
             controller: _subjektifController,
-            hintText: 'Contoh: Pasien mengeluh pusing dan demam sejak 2 hari...',
+            hintText:
+                'Contoh: Pasien mengeluh pusing dan demam sejak 2 hari...',
           ),
           const SizedBox(height: 8),
           _buildInputField(
@@ -1730,18 +1915,24 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
             CircleAvatar(
               radius: 8,
               backgroundColor: const Color(0xFF00897B),
-              child: Text(tag,
-                  style: const TextStyle(
-                      fontSize: 9,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold)),
+              child: Text(
+                tag,
+                style: const TextStyle(
+                  fontSize: 9,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(width: 6),
-            Text(label,
-                style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF334155))),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF334155),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 4),
@@ -1787,8 +1978,7 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
         children: [
           const Row(
             children: [
-              Icon(Icons.favorite_rounded,
-                  color: Color(0xFFE11D48), size: 18),
+              Icon(Icons.favorite_rounded, color: Color(0xFFE11D48), size: 18),
               SizedBox(width: 6),
               Text(
                 'Tanda-Tanda Vital (TTV)',
@@ -1804,32 +1994,52 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
           Row(
             children: [
               Expanded(
-                  child: _buildTtvInputItem(
-                      'Tekanan Darah', 'mmHg', _tdController, '120/80')),
+                child: _buildTtvInputItem(
+                  'Tekanan Darah',
+                  'mmHg',
+                  _tdController,
+                  '120/80',
+                ),
+              ),
               const SizedBox(width: 8),
               Expanded(
-                  child: _buildTtvInputItem(
-                      'Denyut Nadi', 'x/mnt', _nadiController, '80')),
+                child: _buildTtvInputItem(
+                  'Denyut Nadi',
+                  'x/mnt',
+                  _nadiController,
+                  '80',
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
-                  child: _buildTtvInputItem(
-                      'Laju Nafas', 'x/mnt', _rrController, '18')),
+                child: _buildTtvInputItem(
+                  'Laju Nafas',
+                  'x/mnt',
+                  _rrController,
+                  '18',
+                ),
+              ),
               const SizedBox(width: 8),
               Expanded(
-                  child: _buildTtvInputItem(
-                      'Suhu Tubuh', '°C', _suhuController, '36.5')),
+                child: _buildTtvInputItem(
+                  'Suhu Tubuh',
+                  '°C',
+                  _suhuController,
+                  '36.5',
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
-                  child: _buildTtvInputItem(
-                      'SpO2', '%', _spo2Controller, '98')),
+                child: _buildTtvInputItem('SpO2', '%', _spo2Controller, '98'),
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Container(
@@ -1841,17 +2051,22 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('IMT / Gizi',
-                          style: TextStyle(
-                              fontSize: 10, color: Color(0xFF64748B))),
+                      const Text(
+                        'IMT / Gizi',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Color(0xFF64748B),
+                        ),
+                      ),
                       Text(
                         _calculatedImt != null
                             ? '${_calculatedImt!.toStringAsFixed(1)} kg/m² ($_imtStatus)'
                             : '- (Isi BB/TB)',
                         style: const TextStyle(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0F172A)),
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0F172A),
+                        ),
                       ),
                     ],
                   ),
@@ -1863,12 +2078,22 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
           Row(
             children: [
               Expanded(
-                  child: _buildTtvInputItem(
-                      'Berat Badan', 'kg', _bbController, '60')),
+                child: _buildTtvInputItem(
+                  'Berat Badan',
+                  'kg',
+                  _bbController,
+                  '60',
+                ),
+              ),
               const SizedBox(width: 8),
               Expanded(
-                  child: _buildTtvInputItem(
-                      'Tinggi Badan', 'cm', _tbController, '165')),
+                child: _buildTtvInputItem(
+                  'Tinggi Badan',
+                  'cm',
+                  _tbController,
+                  '165',
+                ),
+              ),
             ],
           ),
         ],
@@ -1877,8 +2102,11 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
   }
 
   Widget _buildTtvInputItem(
-      String label, String unit, TextEditingController controller,
-      [String? hint]) {
+    String label,
+    String unit,
+    TextEditingController controller, [
+    String? hint,
+  ]) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -1892,15 +2120,20 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label,
-                    style: const TextStyle(
-                        fontSize: 9.5, color: Color(0xFF64748B))),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 9.5,
+                    color: Color(0xFF64748B),
+                  ),
+                ),
                 TextField(
                   controller: controller,
                   style: const TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0F172A)),
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0F172A),
+                  ),
                   decoration: InputDecoration(
                     isDense: true,
                     border: InputBorder.none,
@@ -1916,11 +2149,14 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
               ],
             ),
           ),
-          Text(unit,
-              style: const TextStyle(
-                  fontSize: 10,
-                  color: Color(0xFF94A3B8),
-                  fontWeight: FontWeight.bold)),
+          Text(
+            unit,
+            style: const TextStyle(
+              fontSize: 10,
+              color: Color(0xFF94A3B8),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
@@ -1940,8 +2176,11 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
         children: [
           const Row(
             children: [
-              Icon(Icons.assignment_turned_in_rounded,
-                  color: Color(0xFF2563EB), size: 18),
+              Icon(
+                Icons.assignment_turned_in_rounded,
+                color: Color(0xFF2563EB),
+                size: 18,
+              ),
               SizedBox(width: 6),
               Text(
                 'Diagnosa & Tindakan Medis',
@@ -1959,18 +2198,24 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Diagnosa ICD-10',
-                  style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF475569))),
+              const Text(
+                'Diagnosa ICD-10',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF475569),
+                ),
+              ),
               InkWell(
                 onTap: _showAddDiagnosaSheet,
-                child: const Text('+ Tambah ICD-10',
-                    style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF00897B))),
+                child: const Text(
+                  '+ Tambah ICD-10',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF00897B),
+                  ),
+                ),
               ),
             ],
           ),
@@ -1984,7 +2229,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                 color: const Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
-                    color: const Color(0xFFE2E8F0), style: BorderStyle.solid),
+                  color: const Color(0xFFE2E8F0),
+                  style: BorderStyle.solid,
+                ),
               ),
               child: const Text(
                 'Belum ada diagnosa dipilih. Klik "+ Tambah ICD-10"',
@@ -1996,48 +2243,62 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
               ),
             )
           else
-            ..._diagnosaList.map((d) => Container(
-                  margin: const EdgeInsets.only(bottom: 4),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF8FBFE),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Text(d,
-                              style: const TextStyle(
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1E293B)))),
-                      InkWell(
-                        onTap: () => setState(() => _diagnosaList.remove(d)),
-                        child: const Icon(Icons.close,
-                            size: 14, color: Color(0xFF94A3B8)),
+            ..._diagnosaList.map(
+              (d) => Container(
+                margin: const EdgeInsets.only(bottom: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FBFE),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        d,
+                        style: const TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1E293B),
+                        ),
                       ),
-                    ],
-                  ),
-                )),
+                    ),
+                    InkWell(
+                      onTap: () => setState(() => _diagnosaList.remove(d)),
+                      child: const Icon(
+                        Icons.close,
+                        size: 14,
+                        color: Color(0xFF94A3B8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           const SizedBox(height: 8),
 
           // ICD-9-CM
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Tindakan ICD-9-CM',
-                  style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF475569))),
+              const Text(
+                'Tindakan ICD-9-CM',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF475569),
+                ),
+              ),
               InkWell(
                 onTap: _showAddTindakanSheet,
-                child: const Text('+ Tambah Tindakan',
-                    style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF2563EB))),
+                child: const Text(
+                  '+ Tambah Tindakan',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2563EB),
+                  ),
+                ),
               ),
             ],
           ),
@@ -2051,7 +2312,9 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                 color: const Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
-                    color: const Color(0xFFE2E8F0), style: BorderStyle.solid),
+                  color: const Color(0xFFE2E8F0),
+                  style: BorderStyle.solid,
+                ),
               ),
               child: const Text(
                 'Belum ada tindakan medis dipilih. Klik "+ Tambah Tindakan"',
@@ -2063,30 +2326,38 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
               ),
             )
           else
-            ..._tindakanList.map((t) => Container(
-                  margin: const EdgeInsets.only(bottom: 4),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEFF6FF),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Text(t,
-                              style: const TextStyle(
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1E40AF)))),
-                      InkWell(
-                        onTap: () => setState(() => _tindakanList.remove(t)),
-                        child: const Icon(Icons.close,
-                            size: 14, color: Color(0xFF94A3B8)),
+            ..._tindakanList.map(
+              (t) => Container(
+                margin: const EdgeInsets.only(bottom: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEFF6FF),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        t,
+                        style: const TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1E40AF),
+                        ),
                       ),
-                    ],
-                  ),
-                )),
+                    ),
+                    InkWell(
+                      onTap: () => setState(() => _tindakanList.remove(t)),
+                      child: const Icon(
+                        Icons.close,
+                        size: 14,
+                        color: Color(0xFF94A3B8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           const SizedBox(height: 8),
 
           _buildInputField(
@@ -2131,8 +2402,11 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                   ),
                   child: const Row(
                     children: [
-                      Icon(Icons.verified_user_rounded,
-                          color: Color(0xFFD97706), size: 18),
+                      Icon(
+                        Icons.verified_user_rounded,
+                        color: Color(0xFFD97706),
+                        size: 18,
+                      ),
                       SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -2174,14 +2448,17 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
                       MapEntry('Laju Nafas', '${_rrController.text} x/mnt'),
                       MapEntry('Suhu Tubuh', '${_suhuController.text} °C'),
                       MapEntry('SpO2', '${_spo2Controller.text} %'),
-                      MapEntry('IMT / Gizi',
-                          '${_calculatedImt?.toStringAsFixed(1) ?? "23.0"} kg/m² ($_imtStatus)'),
+                      MapEntry(
+                        'IMT / Gizi',
+                        '${_calculatedImt?.toStringAsFixed(1) ?? "23.0"} kg/m² ($_imtStatus)',
+                      ),
                     ],
                   ),
 
                 // Review: Diagnosa & Tindakan
-                if (_selectedServices
-                    .contains(ExaminationServiceType.diagnosaTindakan))
+                if (_selectedServices.contains(
+                  ExaminationServiceType.diagnosaTindakan,
+                ))
                   _buildReviewBlock(
                     title: 'Diagnosa, Tindakan & Terapi',
                     icon: Icons.assignment_turned_in_rounded,
@@ -2345,30 +2622,32 @@ class _ExaminationFlowViewState extends State<ExaminationFlowView> {
             ],
           ),
           const SizedBox(height: 8),
-          ...items.map((entry) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      entry.key,
-                      style: const TextStyle(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF64748B),
-                      ),
+          ...items.map(
+            (entry) => Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    entry.key,
+                    style: const TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF64748B),
                     ),
-                    Text(
-                      entry.value.isNotEmpty ? entry.value : '-',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1E293B),
-                      ),
+                  ),
+                  Text(
+                    entry.value.isNotEmpty ? entry.value : '-',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1E293B),
                     ),
-                  ],
-                ),
-              )),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

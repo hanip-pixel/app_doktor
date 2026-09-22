@@ -83,18 +83,6 @@ class _PatientListScreenState extends State<PatientListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final allPatients = DummyPatients.todayList;
-    final totalToday = allPatients.length;
-    final totalInProgress = allPatients
-        .where((p) => p.status == PatientStatus.inProgress)
-        .length;
-    final totalWaiting = allPatients
-        .where((p) => p.status == PatientStatus.waiting)
-        .length;
-    final totalDone = allPatients
-        .where((p) => p.status == PatientStatus.done)
-        .length;
-
     final filteredList = _filteredPatients;
 
     return Scaffold(
@@ -104,45 +92,75 @@ class _PatientListScreenState extends State<PatientListScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Top App Bar
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1.2),
+                ),
+              ),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_rounded,
-                      color: Color(0xFF0F172A),
-                      size: 24,
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE0F2F1),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    onPressed: () {
-                      if (Navigator.of(context).canPop()) {
-                        Navigator.of(context).pop();
-                      }
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  const Text(
-                    'Daftar Pasien',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF0F172A),
-                      letterSpacing: -0.3,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.refresh_rounded,
+                    child: const Icon(
+                      Icons.groups_2_rounded,
                       color: Color(0xFF00897B),
                       size: 22,
                     ),
-                    onPressed: _handleRefresh,
-                    tooltip: 'Muat ulang antrean',
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Daftar Pasien',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF0F172A),
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        SizedBox(height: 1),
+                        Text(
+                          'Cari dan pantau status pasien poli',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF64748B),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${filteredList.length} Data',
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF475569),
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 14),
 
             // Search Bar & Filter Section
             Padding(
@@ -150,23 +168,24 @@ class _PatientListScreenState extends State<PatientListScreen> {
               child: Column(
                 children: [
                   // Search Input
-                  Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: const Color(0xFFE2E8F0),
-                        width: 1,
-                      ),
-                    ),
+                  Material(
+                    color: Colors.white,
+                    elevation: 8,
+                    shadowColor: const Color(
+                      0xFF0F172A,
+                    ).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(28),
+                    clipBehavior: Clip.antiAlias,
                     child: TextField(
                       controller: _searchController,
+                      cursorColor: const Color(0xFF00897B),
                       style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF0F172A),
                       ),
                       decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
                         hintText: 'Cari nama / No. RM / NIK',
                         hintStyle: const TextStyle(
                           color: Color(0xFF94A3B8),
@@ -175,8 +194,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
                         ),
                         prefixIcon: const Icon(
                           Icons.search_rounded,
-                          color: Color(0xFF64748B),
-                          size: 22,
+                          color: Color(0xFF94A3B8),
+                          size: 20,
                         ),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
@@ -190,9 +209,27 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                 },
                               )
                             : null,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(28),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFF1F5F9),
+                            width: 0.8,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(28),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFF1F5F9),
+                            width: 0.8,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(28),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF99D8D0),
+                            width: 1,
+                          ),
+                        ),
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 12,
                           horizontal: 12,
@@ -209,16 +246,13 @@ class _PatientListScreenState extends State<PatientListScreen> {
                       scrollDirection: Axis.horizontal,
                       physics: const BouncingScrollPhysics(),
                       children: [
-                        _buildFilterChip('Hari ini ($totalToday)', 0),
+                        _buildFilterChip('Hari ini', 0),
                         const SizedBox(width: 8),
-                        _buildFilterChip('Menunggu ($totalWaiting)', 1),
+                        _buildFilterChip('Menunggu', 1),
                         const SizedBox(width: 8),
-                        _buildFilterChip(
-                          'Sedang Diperiksa ($totalInProgress)',
-                          2,
-                        ),
+                        _buildFilterChip('Sedang Diperiksa', 2),
                         const SizedBox(width: 8),
-                        _buildFilterChip('Selesai ($totalDone)', 3),
+                        _buildFilterChip('Selesai', 3),
                       ],
                     ),
                   ),

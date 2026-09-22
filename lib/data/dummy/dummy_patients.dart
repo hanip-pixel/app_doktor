@@ -30,10 +30,7 @@ class DummyPatients {
       nadi: '78 x/menit',
       laju: '20 x/menit',
       suhu: '36.5 °C',
-      diagnosa: const [
-        'E11.9  Diabetes melitus tipe 2',
-        'I51.7  Kardiomegali',
-      ],
+      diagnosa: const ['E11.9  Diabetes melitus tipe 2', 'I51.7  Kardiomegali'],
       tindakan: const [
         '89.03  Wawancara dan evaluasi medis komprehensif',
         '87.44  Rontgen Thorax AP/PA',
@@ -45,7 +42,8 @@ class DummyPatients {
             'Pasien datang untuk kontrol rutin DM Tipe 2. Mengeluh sering haus dan badan terasa lemas 3 hari terakhir. Diet karbohidrat belum terkontrol dengan baik.',
         objektif:
             'TD 130/80 mmHg, N 78x/m, RR 20x/m, Suhu 36.5°C, GDS 210 mg/dL. Hasil Rontgen Thorax (RAD/2026/09/0014): Kardiomegali ringan (CTR 54%), pulmo bersih tidak ada infiltrat.',
-        asesmen: 'Diabetes Melitus Tipe 2 tidak terkontrol + Kardiomegali ringan.',
+        asesmen:
+            'Diabetes Melitus Tipe 2 tidak terkontrol + Kardiomegali ringan.',
         plan:
             'Edukasi diet rendah karbohidrat, olahraga jalan santai 30 mnt/hari. Metformin 500mg 3x1 dc, Glimepiride 2mg 1x1 ac.',
       ),
@@ -59,10 +57,7 @@ class DummyPatients {
         tinggiBadan: '168',
       ),
       diagnosaTindakanData: DiagnosaTindakanData(
-        diagnosaList: [
-          'E11.9  Diabetes melitus tipe 2',
-          'I51.7  Kardiomegali',
-        ],
+        diagnosaList: ['E11.9  Diabetes melitus tipe 2', 'I51.7  Kardiomegali'],
         tindakanList: [
           '89.03  Wawancara dan evaluasi medis komprehensif',
           '87.44  Rontgen Thorax AP/PA',
@@ -175,7 +170,8 @@ class DummyPatients {
       laju: '20 x/menit',
       suhu: '38.5 °C',
       diagnosa: const ['A90  Demam dengue'],
-      rencanaTerapi: 'Cek Darah Lengkap (DL + NS1), Paracetamol 500mg, rehidrasi.',
+      rencanaTerapi:
+          'Cek Darah Lengkap (DL + NS1), Paracetamol 500mg, rehidrasi.',
     ),
 
     // -----------------------------------------------------------------
@@ -218,7 +214,8 @@ class DummyPatients {
       status: PatientStatus.done,
       insurance: 'BPJS',
       noSep: '2026R00012350',
-      keluhanUtama: 'Rasa terbakar di ulu hati (heartburn) dan sering bersendawa asam.',
+      keluhanUtama:
+          'Rasa terbakar di ulu hati (heartburn) dan sering bersendawa asam.',
       anamnesis:
           'Keluhan memberat saat berbaring setelah makan atau minum kopi. Mual (+), muntah (-), penurunan BB (-).',
       pemeriksaanFisik:
@@ -313,7 +310,8 @@ class DummyPatients {
       status: PatientStatus.done,
       insurance: 'BPJS',
       noSep: '2026R00012351',
-      keluhanUtama: 'Batuk berdahak warna putih kekuningan > 2 minggu, dada terasa agak sesak.',
+      keluhanUtama:
+          'Batuk berdahak warna putih kekuningan > 2 minggu, dada terasa agak sesak.',
       anamnesis:
           'Batuk berdahak tidak kunjung sembuh, demam sumeng-sumeng pada malam hari, riwayat merokok 1 bungkus/hari. Sudah dilakukan Rontgen Thorax PA: Cor dbn, pulmo tidak tampak sarang spesifik/TB, kesan: Bronkitis akut.',
       pemeriksaanFisik:
@@ -374,7 +372,8 @@ class DummyPatients {
       scheduleTime: '07:30',
       status: PatientStatus.done,
       insurance: 'Umum',
-      keluhanUtama: 'Pusing berputar (vertigo) dan sakit kepala sebelah kiri berdenyut sejak kemarin.',
+      keluhanUtama:
+          'Pusing berputar (vertigo) dan sakit kepala sebelah kiri berdenyut sejak kemarin.',
       anamnesis:
           'Sakit kepala berdenyut sebelah kiri, sensitif terhadap cahaya dan suara bising (fotofobia/fonofobia). Merasa melayang saat bangun tidur. Riwayat kurang tidur dan stres pekerjaan.',
       pemeriksaanFisik:
@@ -387,9 +386,7 @@ class DummyPatients {
         'G43.9  Migrain tidak spesifik',
         'H81.1  Vertigo paroksismal benigna',
       ],
-      tindakan: const [
-        '89.03  Konsultasi dan asesmen neurologis dasar',
-      ],
+      tindakan: const ['89.03  Konsultasi dan asesmen neurologis dasar'],
       rencanaTerapi:
           'Betahistine Mesylate 6mg 3x1 pc, Flunarizine 5mg 1x1 malam.',
       cpptData: CpptData(
@@ -416,9 +413,7 @@ class DummyPatients {
           'G43.9  Migrain tidak spesifik',
           'H81.1  Vertigo paroksismal benigna',
         ],
-        tindakanList: [
-          '89.03  Konsultasi dan asesmen neurologis dasar',
-        ],
+        tindakanList: ['89.03  Konsultasi dan asesmen neurologis dasar'],
         rencanaTerapi:
             'Betahistine Mesylate 6mg 3x1 pc, Flunarizine 5mg 1x1 tab malam, Paracetamol 500mg prn.',
         catatanEdukasi:
@@ -441,7 +436,8 @@ class DummyPatients {
       status: PatientStatus.done,
       insurance: 'BPJS',
       noSep: '2026R00012353',
-      keluhanUtama: 'Nyeri kedua lutut saat berjalan dan berdiri dari posisi duduk, lutut terasa kaku pagi hari.',
+      keluhanUtama:
+          'Nyeri kedua lutut saat berjalan dan berdiri dari posisi duduk, lutut terasa kaku pagi hari.',
       anamnesis:
           'Keluhan nyeri lutut bilateral sudah 6 bulan, memberat 2 minggu ini terutama saat naik tangga. Krepitasi (+). Hasil Rontgen Genu Bilateral: Tampak penyempitan celah sendi medial genu bilateral grade 2 (Osteoartritis).',
       pemeriksaanFisik:
@@ -503,7 +499,8 @@ class DummyPatients {
       status: PatientStatus.done,
       insurance: 'BPJS',
       noSep: '2026R00012354',
-      keluhanUtama: 'Bentol-bentol kemerahan dan gatal di seluruh tubuh setelah makan kepiting/seafood.',
+      keluhanUtama:
+          'Bentol-bentol kemerahan dan gatal di seluruh tubuh setelah makan kepiting/seafood.',
       anamnesis:
           'Timbul bentol plakat eritematosa batas tegas sejak tadi malam setelah makan udang/kepiting. Sesak napas (-), bibir bengkak (-), suara serak (-).',
       pemeriksaanFisik:
@@ -513,11 +510,8 @@ class DummyPatients {
       laju: '18 x/menit',
       suhu: '36.7 °C',
       diagnosa: const ['L50.0  Urtikaria alergi'],
-      tindakan: const [
-        '89.03  Konsultasi dan pemeriksaan dermatologi dasar',
-      ],
-      rencanaTerapi:
-          'Cetirizine 10mg 1x1, Deksametason 0.5mg 3x1 pc.',
+      tindakan: const ['89.03  Konsultasi dan pemeriksaan dermatologi dasar'],
+      rencanaTerapi: 'Cetirizine 10mg 1x1, Deksametason 0.5mg 3x1 pc.',
       cpptData: CpptData(
         subjektif:
             'Muncul bentol-bentol merah gatal di lengan, dada, dan punggung sekitar 3 jam setelah konsumsi seafood. Riwayat alergi udang sebelumnya.',
@@ -538,9 +532,7 @@ class DummyPatients {
       ),
       diagnosaTindakanData: DiagnosaTindakanData(
         diagnosaList: ['L50.0  Urtikaria alergi'],
-        tindakanList: [
-          '89.03  Konsultasi dan pemeriksaan dermatologi dasar',
-        ],
+        tindakanList: ['89.03  Konsultasi dan pemeriksaan dermatologi dasar'],
         rencanaTerapi:
             'Cetirizine 10mg 1x1 malam, Deksametason 0.5mg 3x1 pc selama 3 hari.',
         catatanEdukasi:
@@ -563,7 +555,8 @@ class DummyPatients {
       status: PatientStatus.done,
       insurance: 'BPJS',
       noSep: '2026R00012355',
-      keluhanUtama: 'Kontrol hasil laboratorium kolesterol, leher belakang terasa kaku.',
+      keluhanUtama:
+          'Kontrol hasil laboratorium kolesterol, leher belakang terasa kaku.',
       anamnesis:
           'Kontrol rutin hasil profil lipid: Kolesterol Total 260 mg/dL, LDL 175 mg/dL, Trigliserida 190 mg/dL. Keluhan tengkuk kaku terutama setelah makan berlemak.',
       pemeriksaanFisik:
@@ -577,8 +570,7 @@ class DummyPatients {
         '90.59  Pemeriksaan Profil Lipid Darah',
         '89.03  Konseling diet dan gaya hidup',
       ],
-      rencanaTerapi:
-          'Atorvastatin 20mg 1x1 malam, diet rendah lemak jenuh.',
+      rencanaTerapi: 'Atorvastatin 20mg 1x1 malam, diet rendah lemak jenuh.',
       cpptData: CpptData(
         subjektif:
             'Pasien kontrol berkala kolesterol tinggi. Tengkuk sering terasa tegang dan kaku terutama sore hari.',
@@ -603,8 +595,7 @@ class DummyPatients {
           '90.59  Pemeriksaan Profil Lipid Darah',
           '89.03  Konseling diet dan gaya hidup',
         ],
-        rencanaTerapi:
-            'Atorvastatin 20mg 1x1 malam, diet rendah lemak jenuh.',
+        rencanaTerapi: 'Atorvastatin 20mg 1x1 malam, diet rendah lemak jenuh.',
         catatanEdukasi:
             'Batasi makanan berminyak, jeroan, dan santan. Lakukan olahraga aerobik 150 menit per minggu.',
       ),
@@ -635,9 +626,7 @@ class DummyPatients {
       laju: '18 x/menit',
       suhu: '36.5 °C',
       diagnosa: const ['M54.5  Low back pain'],
-      tindakan: const [
-        '89.03  Konsultasi dan evaluasi muskuloskeletal',
-      ],
+      tindakan: const ['89.03  Konsultasi dan evaluasi muskuloskeletal'],
       rencanaTerapi:
           'Eperisone HCl 50mg 3x1 pc, Natrium Diklofenak 50mg 2x1 pc.',
       cpptData: CpptData(
@@ -660,9 +649,7 @@ class DummyPatients {
       ),
       diagnosaTindakanData: DiagnosaTindakanData(
         diagnosaList: ['M54.5  Low back pain'],
-        tindakanList: [
-          '89.03  Konsultasi dan evaluasi muskuloskeletal',
-        ],
+        tindakanList: ['89.03  Konsultasi dan evaluasi muskuloskeletal'],
         rencanaTerapi:
             'Eperisone HCl 50mg 3x1 pc, Natrium Diklofenak 50mg 2x1 pc.',
         catatanEdukasi:
@@ -671,4 +658,3 @@ class DummyPatients {
     ),
   ];
 }
-

@@ -204,6 +204,37 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     }
   }
 
+  Future<void> _openBillingCorrection() async {
+    final updated = await Navigator.push<Patient>(
+      context,
+      MaterialPageRoute(builder: (_) => BillingScreen(patient: _patient)),
+    );
+
+    if (updated != null && mounted) {
+      setState(() {
+        _patient = updated;
+      });
+      _updatePatientInDummyList(updated);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Jasa layanan pasien berhasil diperbarui.'),
+          backgroundColor: Color(0xFF00897B),
+        ),
+      );
+    }
+  }
+
+  Future<void> _openMedicineOrderCorrection() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => MedicineOrderScreen(patient: _patient)),
+    );
+
+    if (!mounted) return;
+    setState(() {});
+  }
+
   void _showLoadingDialog(String title, String subtitle) {
     showDialog(
       context: context,
@@ -1749,92 +1780,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           // RENCANA TERAPI, RESEP & EDUKASI
           _sectionTitle('Rencana Terapi, Resep & Edukasi'),
           const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(
-                      Icons.medication_rounded,
-                      color: Color(0xFF00897B),
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Instruksi Obat & Resep:',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF64748B),
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            _patient.rencanaTerapi ?? _terapiController.text,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF1E293B),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                if (_patient.diagnosaTindakanData?.catatanEdukasi.isNotEmpty ==
-                    true) ...[
-                  const Divider(height: 16, color: Color(0xFFF1F5F9)),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.school_rounded,
-                        color: Color(0xFFD97706),
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Edukasi Pasien:',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF64748B),
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              _patient.diagnosaTindakanData!.catatanEdukasi,
-                              style: const TextStyle(
-                                fontSize: 12.5,
-                                color: Color(0xFF334155),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ],
-            ),
-          ),
+          _buildDonePrescriptionSection(),
           const SizedBox(height: 24),
 
           // Tombol Cetak / Lihat Resume
@@ -2930,7 +2876,10 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.22),
                         borderRadius: BorderRadius.circular(6),
@@ -2959,10 +2908,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 const SizedBox(height: 4),
                 const Text(
                   'Tarif otomatis disinkronkan ke Kasir & Klaim BPJS / Casemix',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 11,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 11),
                 ),
               ],
             ),
@@ -2974,20 +2920,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             width: double.infinity,
             height: 46,
             child: ElevatedButton.icon(
-              onPressed: () async {
-                final updated = await Navigator.push<Patient>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => BillingScreen(patient: _patient),
-                  ),
-                );
-                if (updated != null && mounted) {
-                  setState(() {
-                    _patient = updated;
-                  });
-                  _updatePatientInDummyList(updated);
-                }
-              },
+              onPressed: _openBillingCorrection,
               icon: const Icon(Icons.tune_rounded, size: 19),
               label: const Text(
                 'Kelola Lengkap (Tambah / Hapus Tindakan)',
@@ -3065,7 +2998,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                   const Text(
                     'Pilih tindakan medis atau jasa konsultasi dari katalog resmi untuk dicatat ke billing pasien.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: Color(0xFF64748B), height: 1.35),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF64748B),
+                      height: 1.35,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   SizedBox(
@@ -3089,7 +3026,10 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       icon: const Icon(Icons.playlist_add_rounded, size: 20),
                       label: const Text(
                         'Pilih Tindakan Poli',
-                        style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00897B),
@@ -3108,8 +3048,15 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                     alignment: WrapAlignment.center,
                     children: [
                       ActionChip(
-                        avatar: const Icon(Icons.add, size: 14, color: Color(0xFF00897B)),
-                        label: const Text('Konsultasi Spesialis', style: TextStyle(fontSize: 11.5)),
+                        avatar: const Icon(
+                          Icons.add,
+                          size: 14,
+                          color: Color(0xFF00897B),
+                        ),
+                        label: const Text(
+                          'Konsultasi Spesialis',
+                          style: TextStyle(fontSize: 11.5),
+                        ),
                         backgroundColor: const Color(0xFFE0F2F1),
                         side: BorderSide.none,
                         onPressed: () {
@@ -3117,15 +3064,26 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                             (s) => s.id == 'svc-001',
                             orElse: () => DummyBilling.serviceCatalog.first,
                           );
-                          final updated = List<ServiceItem>.from(_patient.services)..add(item);
-                          final newPatient = _patient.copyWith(services: updated);
+                          final updated = List<ServiceItem>.from(
+                            _patient.services,
+                          )..add(item);
+                          final newPatient = _patient.copyWith(
+                            services: updated,
+                          );
                           setState(() => _patient = newPatient);
                           _updatePatientInDummyList(newPatient);
                         },
                       ),
                       ActionChip(
-                        avatar: const Icon(Icons.add, size: 14, color: Color(0xFF00897B)),
-                        label: const Text('EKG 12-Lead', style: TextStyle(fontSize: 11.5)),
+                        avatar: const Icon(
+                          Icons.add,
+                          size: 14,
+                          color: Color(0xFF00897B),
+                        ),
+                        label: const Text(
+                          'EKG 12-Lead',
+                          style: TextStyle(fontSize: 11.5),
+                        ),
                         backgroundColor: const Color(0xFFE0F2F1),
                         side: BorderSide.none,
                         onPressed: () {
@@ -3133,8 +3091,12 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                             (s) => s.id == 'svc-003',
                             orElse: () => DummyBilling.serviceCatalog.first,
                           );
-                          final updated = List<ServiceItem>.from(_patient.services)..add(item);
-                          final newPatient = _patient.copyWith(services: updated);
+                          final updated = List<ServiceItem>.from(
+                            _patient.services,
+                          )..add(item);
+                          final newPatient = _patient.copyWith(
+                            services: updated,
+                          );
                           setState(() => _patient = newPatient);
                           _updatePatientInDummyList(newPatient);
                         },
@@ -3168,7 +3130,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF64748B)),
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 16,
+                    color: Color(0xFF64748B),
+                  ),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -3200,42 +3166,70 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: const Color(0xFFE2E8F0)),
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.receipt_long_outlined,
-                color: Color(0xFF64748B),
-                size: 20,
-              ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.receipt_long_outlined,
+                    color: Color(0xFF64748B),
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Belum Ada Jasa Layanan Tercatat',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF334155),
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Pemeriksaan medis sudah terkunci, namun rincian jasa layanan masih dapat ditambahkan untuk kebutuhan billing.',
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Color(0xFF64748B),
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Tidak Ada Tindakan Medis Khusus',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF334155),
-                    ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: ElevatedButton.icon(
+                onPressed: _openBillingCorrection,
+                icon: const Icon(Icons.add_card_rounded, size: 18),
+                label: const Text(
+                  'Tambah Jasa Layanan',
+                  style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00897B),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  SizedBox(height: 2),
-                  Text(
-                    'Kunjungan konsultasi rawat jalan standar (tanpa tindakan berbayar tambahan).',
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      color: Color(0xFF64748B),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ],
@@ -3259,7 +3253,10 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 3.5,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFECFDF5),
                   borderRadius: BorderRadius.circular(6),
@@ -3268,7 +3265,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.check_circle_rounded, color: Color(0xFF059669), size: 13),
+                    Icon(
+                      Icons.check_circle_rounded,
+                      color: Color(0xFF059669),
+                      size: 13,
+                    ),
                     SizedBox(width: 4),
                     Text(
                       'Tersinkronisasi ke Kasir & BPJS',
@@ -3333,7 +3334,10 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 1.5,
+                                ),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFE2E8F0),
                                   borderRadius: BorderRadius.circular(4),
@@ -3373,6 +3377,35 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               );
             }).toList(),
           ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            height: 42,
+            child: OutlinedButton.icon(
+              onPressed: _openBillingCorrection,
+              icon: const Icon(Icons.edit_note_rounded, size: 18),
+              label: const Text(
+                'Koreksi / Tambah Jasa Layanan',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF00897B),
+                side: const BorderSide(color: Color(0xFF99F6E4)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Koreksi ini hanya mengubah rincian jasa layanan/billing, bukan isi rekam medis yang sudah terkunci.',
+            style: TextStyle(
+              fontSize: 11.2,
+              color: Color(0xFF64748B),
+              height: 1.35,
+            ),
+          ),
           const Divider(height: 18, color: Color(0xFFE2E8F0)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -3397,6 +3430,228 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDonePrescriptionSection() {
+    final medicineOrders = DummyOrders.getOrdersByPatient(
+      _patient.id,
+    ).where((order) => order.type == OrderType.medicine).toList();
+    final hasEducation =
+        _patient.diagnosaTindakanData?.catatanEdukasi.isNotEmpty == true;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (medicineOrders.isEmpty)
+            _buildEmptyPrescriptionContent()
+          else
+            _buildPrescriptionOrderContent(medicineOrders),
+          if (hasEducation) ...[
+            const Divider(height: 16, color: Color(0xFFF1F5F9)),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.school_rounded,
+                  color: Color(0xFFD97706),
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Edukasi Pasien:',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF64748B),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _patient.diagnosaTindakanData!.catatanEdukasi,
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          color: Color(0xFF334155),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyPrescriptionContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.medication_outlined,
+              color: Color(0xFF64748B),
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Belum Ada Resep Obat Tercatat',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF334155),
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'Pemeriksaan medis sudah terkunci, namun resep obat masih dapat dibuat untuk dikirim ke Farmasi.',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      color: Color(0xFF64748B),
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          height: 44,
+          child: ElevatedButton.icon(
+            onPressed: _openMedicineOrderCorrection,
+            icon: const Icon(Icons.add_circle_outline_rounded, size: 18),
+            label: const Text(
+              'Buat Resep Obat',
+              style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00897B),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPrescriptionOrderContent(List<MedicalOrder> medicineOrders) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Resep Obat Terkirim',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0F172A),
+              ),
+            ),
+            Text(
+              '${medicineOrders.length} resep',
+              style: const TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF64748B),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Column(
+          children: medicineOrders.expand((order) {
+            return order.items.map((item) {
+              return Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.medication_rounded,
+                      color: Color(0xFF00897B),
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF334155),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            });
+          }).toList(),
+        ),
+        const SizedBox(height: 4),
+        SizedBox(
+          width: double.infinity,
+          height: 42,
+          child: OutlinedButton.icon(
+            onPressed: _openMedicineOrderCorrection,
+            icon: const Icon(Icons.edit_note_rounded, size: 18),
+            label: const Text(
+              'Koreksi / Tambah Resep Obat',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFF00897B),
+              side: const BorderSide(color: Color(0xFF99F6E4)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'Koreksi ini hanya mengubah resep/farmasi, bukan isi rekam medis yang sudah terkunci.',
+          style: TextStyle(
+            fontSize: 11.2,
+            color: Color(0xFF64748B),
+            height: 1.35,
+          ),
+        ),
+      ],
     );
   }
 

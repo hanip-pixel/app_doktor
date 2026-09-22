@@ -34,9 +34,9 @@ class _MedicineOrderScreenState extends State<MedicineOrderScreen> {
 
   List<MedicineOrder> get _filtered {
     return _items.where((item) {
-      final matchSearch = item.name
-          .toLowerCase()
-          .contains(_searchController.text.trim().toLowerCase());
+      final matchSearch = item.name.toLowerCase().contains(
+        _searchController.text.trim().toLowerCase(),
+      );
       bool matchFilter;
       switch (_activeFilter) {
         case 'Favorit':
@@ -106,8 +106,10 @@ class _MedicineOrderScreenState extends State<MedicineOrderScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFFBEB),
                   borderRadius: BorderRadius.circular(10),
@@ -257,7 +259,9 @@ class _MedicineOrderScreenState extends State<MedicineOrderScreen> {
                           });
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Semua pilihan obat telah di-reset.'),
+                              content: Text(
+                                'Semua pilihan obat telah di-reset.',
+                              ),
                               duration: Duration(seconds: 1),
                             ),
                           );
@@ -578,8 +582,9 @@ class _MedicineOrderScreenState extends State<MedicineOrderScreen> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 13),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 13,
+                                  ),
                                 ),
                               ),
                             ),
@@ -587,12 +592,14 @@ class _MedicineOrderScreenState extends State<MedicineOrderScreen> {
                             Expanded(
                               flex: 3,
                               child: ElevatedButton.icon(
-                                onPressed: currentSelected.isEmpty || _isSubmitting
+                                onPressed:
+                                    currentSelected.isEmpty || _isSubmitting
                                     ? null
                                     : () async {
                                         Navigator.pop(ctx);
-                                        final messenger =
-                                            ScaffoldMessenger.of(context);
+                                        final messenger = ScaffoldMessenger.of(
+                                          context,
+                                        );
                                         final navigator = Navigator.of(context);
 
                                         setState(() => _isSubmitting = true);
@@ -613,8 +620,10 @@ class _MedicineOrderScreenState extends State<MedicineOrderScreen> {
                                             patient: widget.patient,
                                             type: OrderType.medicine,
                                             items: currentSelected
-                                                .map((e) =>
-                                                    '${e.name} (${e.dosage})')
+                                                .map(
+                                                  (e) =>
+                                                      '${e.name} (${e.dosage})',
+                                                )
                                                 .toList(),
                                             clinicalNotes:
                                                 'Resep elektronik rawat jalan poli.',
@@ -626,18 +635,21 @@ class _MedicineOrderScreenState extends State<MedicineOrderScreen> {
                                         messenger.showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                              'Resep $orderNum (${currentSelected.length} obat) berhasil dikirim ke Farmasi & Billing.',
+                                              'Resep $orderNum (${currentSelected.length} obat) berhasil dikirim ke Farmasi dan akan masuk tagihan pasien.',
                                             ),
-                                            backgroundColor:
-                                                const Color(0xFF00897B),
-                                            duration: const Duration(seconds: 3),
+                                            backgroundColor: const Color(
+                                              0xFF00897B,
+                                            ),
+                                            duration: const Duration(
+                                              seconds: 3,
+                                            ),
                                           ),
                                         );
                                         navigator.pop();
                                       },
                                 icon: const Icon(Icons.send_rounded, size: 18),
                                 label: Text(
-                                  'Kirim ke Billing (${currentSelected.length})',
+                                  'Kirim Resep ke Farmasi (${currentSelected.length})',
                                   style: const TextStyle(
                                     fontSize: 13.5,
                                     fontWeight: FontWeight.w700,
@@ -649,8 +661,9 @@ class _MedicineOrderScreenState extends State<MedicineOrderScreen> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 13),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 13,
+                                  ),
                                   elevation: 0,
                                 ),
                               ),
@@ -721,11 +734,7 @@ class _MedicineOrderScreenState extends State<MedicineOrderScreen> {
                 ),
               ),
               child: item.selected
-                  ? const Icon(
-                      Icons.check,
-                      size: 16,
-                      color: Colors.white,
-                    )
+                  ? const Icon(Icons.check, size: 16, color: Colors.white)
                   : null,
             ),
             const SizedBox(width: 12),

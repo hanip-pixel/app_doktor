@@ -152,10 +152,8 @@ class Patient {
       rencanaTerapi: rencanaTerapi ?? this.rencanaTerapi,
       cpptData: cpptData ?? this.cpptData,
       ttvData: ttvData ?? this.ttvData,
-      diagnosaTindakanData:
-          diagnosaTindakanData ?? this.diagnosaTindakanData,
+      diagnosaTindakanData: diagnosaTindakanData ?? this.diagnosaTindakanData,
       services: services ?? this.services,
     );
   }
 }
-
